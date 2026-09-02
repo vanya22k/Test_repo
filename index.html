@@ -442,7 +442,10 @@ async function loadFilters(){
   partnerPricingType = f.partnerPricingType || {};
   if (f.dateMin) document.getElementById('f-from').value = f.dateMin.slice(0,10);
   if (f.dateMax) document.getElementById('f-to').value = f.dateMax.slice(0,10);
-  renderAllocPartnerChips();
+  // FIX: renderAllocPartnerChips() is from the old simulator and does not exist.
+  // The v9 simulator populates the partner dropdown from backend row data inside
+  // renderAllocPartnerDropdown(), which is called by renderAllocTable().
+  // Nothing to call here — initialiseAllocationSimulator() handles it after loadFilters.
 }
 
 function currentFilters(){
