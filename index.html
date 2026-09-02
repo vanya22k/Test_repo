@@ -966,38 +966,47 @@ function renderAllocTable(data){
 }
 
 function updateAllocSummary(data){
-  const costEl=document.getElementById('alloc-projected-cost');
-  const cpolEl=document.getElementById('alloc-net-cpol');
-  const idealCpolEl=document.getElementById('alloc-ideal-net-cpol');
-  if(!costEl||!cpolEl)return;
-  costEl.textContent=data&&isFinite(data.projectedCost)?fmtMoney(data.projectedCost):'—';
-  cpolEl.textContent=data&&isFinite(data.netCPOL)?fmtRate(data.netCPOL):'—';
-  if(idealCpolEl) idealCpolEl.textContent=data&&isFinite(data.idealNetCPOL)?fmtRate(data.idealNetCPOL):'—';
+  const costEl      = document.getElementById('alloc-projected-cost');
+  const cpolEl      = document.getElementById('alloc-net-cpol');
+  const idealCpolEl = document.getElementById('alloc-ideal-net-cpol');
+  if(!costEl||!cpolEl) return;
+  costEl.textContent      = data&&isFinite(data.projectedCost)  ? fmtMoney(data.projectedCost)  : '—';
+  cpolEl.textContent      = data&&isFinite(data.netCPOL)        ? fmtRate(data.netCPOL)          : '—';
+  if(idealCpolEl) idealCpolEl.textContent = data&&isFinite(data.idealNetCPOL) ? fmtRate(data.idealNetCPOL) : '—';
 
-  const warning=document.getElementById('alloc-validation-warning');
-  if(data && data.allocationValid===false){
-    warning.style.display='block';
-    warning.textContent='⚠ Input allocation must total 100%. Current total: '+Number(data.inputAllocationPct||0).toFixed(2)+'%';
-  }else{
-    warning.style.display='none';
-    warning.textContent='';
+  const warning = document.getElementById('alloc-validation-warning');
+  warning.style.background  = '';
+  warning.style.borderColor = '';
+  warning.style.color       = '';
+
+  if(data && data.allocationValid === false){
+    warning.style.display = 'block';
+    warning.textContent = '⚠ Input allocation must total 100%. Current total: '+Number(data.inputAllocationPct||0).toFixed(2)+'%';
+    return;
   }
 
-  // Show Target vs Ideal Net CPOL comparison if target is set
+  // Target CPOL is a display-only benchmark — compare against Ideal Net CPOL (always cheapest achievable)
   const targetInput = document.getElementById('alloc-target-cpo');
-  const targetVal = targetInput && targetInput.value !== '' ? Number(targetInput.value) : null;
-  if(targetVal != null && data && data.idealNetCPOL != null){
+  const targetVal   = targetInput && targetInput.value !== '' ? Number(targetInput.value) : null;
+
+  if(targetVal != null && data && data.idealNetCPOL != null && isFinite(data.idealNetCPOL)){
     const diff = round2(data.idealNetCPOL - targetVal);
-    const achieved = Math.abs(diff) < 0.5;
-    warning.style.display = achieved ? 'none' : 'block';
-    if(!achieved && data.allocationValid !== false){
-      warning.style.background = 'var(--warn-tint)';
+    if(diff <= 0){
+      warning.style.display     = 'block';
+      warning.style.background  = 'var(--good-tint)';
+      warning.style.borderColor = 'var(--good)';
+      warning.style.color       = 'var(--good)';
+      warning.textContent = '✓ Best achievable Ideal Net CPOL ('+fmtRate(data.idealNetCPOL)+') is at or below your target ('+fmtRate(targetVal)+'). Cheapest allocation beats target by ₹'+Math.abs(diff)+'.';
+    } else {
+      warning.style.display     = 'block';
+      warning.style.background  = 'var(--warn-tint)';
       warning.style.borderColor = 'var(--warn)';
-      warning.style.color = 'var(--warn)';
-      warning.textContent = diff > 0
-        ? '⚠ Ideal Net CPOL ('+fmtRate(data.idealNetCPOL)+') is ₹'+Math.abs(diff)+' above target ('+fmtRate(targetVal)+'). Try selecting cheaper partners or loosening constraints.'
-        : '✓ Ideal Net CPOL ('+fmtRate(data.idealNetCPOL)+') is below target — cheapest achievable mix shown.';
+      warning.style.color       = 'var(--warn)';
+      warning.textContent = '⚠ Best achievable Ideal Net CPOL ('+fmtRate(data.idealNetCPOL)+') is ₹'+diff+' above your target ('+fmtRate(targetVal)+'). Try removing expensive partners or adjusting target.';
     }
+  } else {
+    warning.style.display = 'none';
+    warning.textContent   = '';
   }
 }
 
