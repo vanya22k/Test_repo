@@ -254,7 +254,7 @@
               <th>Reverse Cost</th>
               <th>Total Cost</th>
               <th style="color:var(--teal);">Fwd CPO</th>
-              <th style="color:var(--coral);">Rev CPO</th>
+              <th style="color:var(--coral);">RTO CPO</th>
               <th id="th-cpol">CPOL</th>
             </tr>
           </thead>
@@ -887,11 +887,19 @@ async function runAllocationSimulation(){
     const tbody=document.querySelector('#tbl-alloc tbody');
     if(tbody && !tbody.children.length)tbody.innerHTML='<tr class="empty-row"><td colspan="6">Calculating…</td></tr>';
     try{
-      const data=await apiGet('simulateAllocation',{
-        totalVolume:allocTotalVolume,
-        targetCpol:allocTargetCPO==null?'':allocTargetCPO,
-        allocations:JSON.stringify(collectAllocations())
-      });
+      // FIX 7+9: GAS URL params are flat strings. Sending allocations as
+      // JSON.stringify caused Object.keys() on the string (char indices).
+      // Solution: send each partner allocation as a separate param prefixed
+      // with 'alloc_', then the backend reads them individually.
+      // The backend simulateAllocation() is updated to parse 'alloc_*' params.
+      const allocObj = collectAllocations();
+      const simParams = {
+        totalVolume: allocTotalVolume,
+        targetCpol: allocTargetCPO == null ? '' : allocTargetCPO
+      };
+      // Send each partner allocation as alloc_PartnerName=pct
+      Object.keys(allocObj).forEach(p => { simParams['alloc_' + p] = allocObj[p]; });
+      const data=await apiGet('simulateAllocation', simParams);
       renderAllocTable(data);
     }catch(err){
       if(tbody)tbody.innerHTML='<tr class="empty-row"><td colspan="6">Unable to calculate: '+err.message+'</td></tr>';
@@ -933,10 +941,14 @@ async function initialiseAllocationSimulator(){
   }
 }
 
+// FIX 1: declare lastDashboardData at module scope
+let lastDashboardData = null;
+
 function renderAllDashboardData(data){
-  lastDashboardData=data;
+  lastDashboardData = data;
   const shipType=document.getElementById('f-type').value;
-  const cpolLabel=shipType==='Forward'?'Fwd CPO':shipType==='Reverse'?'Rev CPO':'CPOL';
+  // FIX 8: label column correctly as 'RTO CPO' to match v8 backend semantics
+  const cpolLabel=shipType==='Forward'?'Fwd CPO':shipType==='Reverse'?'RTO CPO':'CPOL';
   const cpolTh=document.getElementById('th-cpol');
   if(cpolTh)cpolTh.textContent=cpolLabel;
   renderKpis(data.kpis||{});
@@ -949,8 +961,10 @@ function renderAllDashboardData(data){
   renderPartnerPieChart(data.byPartner);
   const granLabel={day:'Daily',week:'Weekly',month:'Monthly'}[data.trendGranularity||'day'];
   document.getElementById('trend-title').textContent='CPOL & Order Volume Trend ('+granLabel+')';
-  computeHistoricalShare();
-  if(allocSelected.size){syncAllocTotals();runAllocOptimizer();}
+  // FIX 2+3+4+6: removed calls to computeHistoricalShare / syncAllocTotals / runAllocOptimizer
+  // — these were from the old optimizer pattern and do not exist in this file.
+  // The allocation simulator now uses runAllocationSimulation() and is self-contained.
+  if(allocSelected.size && allocTotalVolume > 0) runAllocationSimulation();
 }
 
 async function loadDashboard(){
@@ -972,7 +986,10 @@ async function loadDashboard(){
   }
 }
 
-initialiseAllocationSimulator();
+// FIX 5: removed premature standalone initialiseAllocationSimulator() call here.
+// It was running before loadFilters() completed, fetching with empty partner state,
+// and the allocInitialised guard then prevented the correct call inside init().
+// It now only runs inside init() after await loadFilters().
 
 ['f-partner','f-zone','f-type','f-payment'].forEach(id=>document.getElementById(id).addEventListener('change',loadDashboard));
 ['f-from','f-to'].forEach(id=>document.getElementById(id).addEventListener('change',loadDashboard));
@@ -1006,6 +1023,9 @@ window.addEventListener('resize',()=>{
   try{
     await loadFilters();
     await loadDashboard();
+    // FIX 5: initialiseAllocationSimulator() runs here — after loadFilters() has
+    // populated allPartners and date ranges — so the initial simulator fetch has
+    // full context. The allocInitialised guard ensures it only runs once.
     await initialiseAllocationSimulator();
   }catch(err){
     setStatus('Could not reach the Apps Script API. Check deployment access and API_URL. ('+err.message+')','error');
