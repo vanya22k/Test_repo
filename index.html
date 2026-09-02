@@ -458,7 +458,9 @@ async function loadFilters(){
   partnerPricingType = f.partnerPricingType || {};
   if (f.dateMin) document.getElementById('f-from').value = f.dateMin.slice(0,10);
   if (f.dateMax) document.getElementById('f-to').value = f.dateMax.slice(0,10);
-  renderAllocPartnerChips();
+  // FIX: renderAllocPartnerChips() removed — function does not exist in this file.
+  // The partner dropdown is populated by renderAllocPartnerDropdown() inside
+  // renderAllocTable(), which initialiseAllocationSimulator() calls after loadFilters().
 }
 
 function currentFilters(){
@@ -762,6 +764,7 @@ function renderPartnerPieChart(byPartner){
    Screen: Target CPOL + Total Volume + partner table only.
    Historical RTO % remains backend-only.
    ============================================================ */
+let lastDashboardData = null; // FIX: declared at module scope (was implicit global)
 let allocTargetCPO = null;
 let allocTotalVolume = 0;
 let allocRows = {};
@@ -937,8 +940,10 @@ function collectAllocations(){
 }
 
 let allocSimTimer=null;
-async // Live total % bar — shows running sum of selected partners' allocations
-// When partners are added/removed, redistribute existing allocations to sum to 100%
+
+// Live total % bar — shows running sum of selected partners' allocations.
+// When partners are added/removed, redistribute existing allocations to sum to 100%.
+// FIX: stray "async" keyword removed — redistributeAllocToHundred is synchronous.
 function redistributeAllocToHundred(){
   const selected=Array.from(allocSelected);
   if(!selected.length) return;
@@ -995,11 +1000,16 @@ function runAllocationSimulation(){
     const tbody=document.querySelector('#tbl-alloc tbody');
     if(tbody && !tbody.children.length)tbody.innerHTML='<tr class="empty-row"><td colspan="7">Calculating…</td></tr>';
     try{
-      const data=await apiGet('simulateAllocation',{
-        totalVolume:allocTotalVolume,
-        targetCpol:allocTargetCPO==null?'':allocTargetCPO,
-        allocations:JSON.stringify(collectAllocations())
-      });
+      // FIX: allocations previously sent as JSON.stringify(). GAS URL params are flat
+      // strings — Object.keys() on a raw JSON string iterates character indices not
+      // partner names. Now sent as individual alloc_PartnerName=pct params.
+      const allocObj = collectAllocations();
+      const simParams = {
+        totalVolume: allocTotalVolume,
+        targetCpol: allocTargetCPO == null ? '' : allocTargetCPO
+      };
+      Object.keys(allocObj).forEach(p => { simParams['alloc_' + p] = allocObj[p]; });
+      const data=await apiGet('simulateAllocation', simParams);
       renderAllocTable(data);
     }catch(err){
       if(tbody)tbody.innerHTML='<tr class="empty-row"><td colspan="6">Unable to calculate: '+err.message+'</td></tr>';
@@ -1063,8 +1073,10 @@ function renderAllDashboardData(data){
   renderPartnerPieChart(data.byPartner);
   const granLabel={day:'Daily',week:'Weekly',month:'Monthly'}[data.trendGranularity||'day'];
   document.getElementById('trend-title').textContent='CPOL & Order Volume Trend ('+granLabel+')';
-  computeHistoricalShare();
-  if(allocSelected.size){syncAllocTotals();runAllocOptimizer();}
+  // FIX: removed computeHistoricalShare(), syncAllocTotals(), runAllocOptimizer()
+  // — these are from the old optimizer and are not defined in this file.
+  // The new allocation simulator is self-contained; re-run it when dashboard refreshes.
+  if(allocSelected.size && allocTotalVolume > 0) runAllocationSimulation();
 }
 
 async function loadDashboard(){
@@ -1086,7 +1098,10 @@ async function loadDashboard(){
   }
 }
 
-initialiseAllocationSimulator();
+// FIX: removed premature standalone initialiseAllocationSimulator() call here.
+// It was firing before loadFilters() completed (partners not yet known) and the
+// allocInitialised guard was then blocking the correct call inside init().
+// Now only called inside init() after await loadFilters().
 
 ['f-partner','f-zone','f-type','f-payment'].forEach(id=>document.getElementById(id).addEventListener('change',loadDashboard));
 ['f-from','f-to'].forEach(id=>document.getElementById(id).addEventListener('change',loadDashboard));
