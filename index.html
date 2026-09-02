@@ -520,7 +520,9 @@ function renderRowsTable(tableId, rows, highlightBestRow, showTotalRow){
   // RVP is displayed at the bottom, highlighted, and EXCLUDED from the Total row
   let rvpRow = null;
   if (tableId === 'tbl-partner') {
-    rows = (rows || []).filter(r => r[1] > 0 || r[4] > 0 || r[2] > 0);
+    // Keep any row that has orders OR costs — r[1]=totalOrders can round to 0
+    // for very small counts, so also check rtoOrders (r[8]) and rvpOrders (r[9])
+    rows = (rows || []).filter(r => r[1] > 0 || r[2] > 0 || r[4] > 0 || (r[8]||0) > 0 || (r[9]||0) > 0);
     const rvpIdx = rows.findIndex(r => r[0] === 'RVP');
     if (rvpIdx >= 0) {
       rvpRow = rows[rvpIdx];
