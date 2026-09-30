@@ -9,166 +9,122 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#faf8fc; --panel:#ffffff; --panel-2:#f6f2fa; --border:#e8e0f2;
-    --text:#241f33; --muted:#7a7291; --accent:#5b6ee8; --accent-2:#9c6ff0; --coral:#ff7a8a;
-    --good:#22a06b; --warn:#d68a1f; --bad:#e05a5a; --teal:#0fa8ae;
-    --accent-tint:rgba(91,110,232,0.10); --accent-tint-strong:rgba(156,111,240,0.12);
-    --good-tint:rgba(34,160,107,0.10); --good-tint-strong:rgba(34,160,107,0.16);
-    --warn-tint:rgba(214,138,31,0.12); --warn-tint-strong:rgba(214,138,31,0.16);
-    --bad-tint:rgba(224,90,90,0.09); --bad-tint-strong:rgba(224,90,90,0.12); --bad-border-tint:rgba(224,90,90,0.28); --bad-border:rgba(224,90,90,0.4);
-    --teal-tint:rgba(15,168,174,0.10); --teal-tint-strong:rgba(15,168,174,0.16);
-    --coral-tint:rgba(255,122,138,0.10); --coral-tint-strong:rgba(255,122,138,0.16);
-    --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px;
-    --space-5:24px; --space-6:32px; --space-7:48px;
+    --bg:#faf8fc;--panel:#ffffff;--panel-2:#f6f2fa;--border:#e8e0f2;
+    --text:#241f33;--muted:#7a7291;--accent:#5b6ee8;--accent-2:#9c6ff0;--coral:#ff7a8a;
+    --good:#22a06b;--warn:#d68a1f;--bad:#e05a5a;--teal:#0fa8ae;
+    --accent-tint:rgba(91,110,232,0.10);--accent-tint-strong:rgba(156,111,240,0.12);
+    --good-tint:rgba(34,160,107,0.10);--good-tint-strong:rgba(34,160,107,0.16);
+    --warn-tint:rgba(214,138,31,0.12);--warn-tint-strong:rgba(214,138,31,0.16);
+    --bad-tint:rgba(224,90,90,0.09);--bad-tint-strong:rgba(224,90,90,0.12);
+    --bad-border-tint:rgba(224,90,90,0.28);--bad-border:rgba(224,90,90,0.4);
+    --teal-tint:rgba(15,168,174,0.10);--teal-tint-strong:rgba(15,168,174,0.16);
+    --coral-tint:rgba(255,122,138,0.10);--coral-tint-strong:rgba(255,122,138,0.16);
+    --space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;
     --accent-glow:rgba(91,110,232,0.32);
-    --radius:18px; --radius-sm:12px;
-    --shadow:0 2px 10px rgba(90,60,140,0.05), 0 10px 28px rgba(90,60,140,0.07);
-    --shadow-hover:0 6px 18px rgba(90,60,140,0.09), 0 18px 36px rgba(90,60,140,0.12);
+    --radius:18px;--radius-sm:12px;
+    --shadow:0 2px 10px rgba(90,60,140,0.05),0 10px 28px rgba(90,60,140,0.07);
+    --shadow-hover:0 6px 18px rgba(90,60,140,0.09),0 18px 36px rgba(90,60,140,0.12);
     font-size:15px;
   }
   *{box-sizing:border-box;}
   body{
-    margin:0; background:linear-gradient(160deg, #fbf8fd 0%, #f5f1fb 40%, #f0f4fc 100%);
-    color:var(--text); font-family:'Plus Jakarta Sans',-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
-    padding:var(--space-6) var(--space-6) var(--space-7);
-    position:relative; overflow-x:hidden;
+    margin:0;background:linear-gradient(160deg,#fbf8fd 0%,#f5f1fb 40%,#f0f4fc 100%);
+    color:var(--text);font-family:'Plus Jakarta Sans',-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    padding:var(--space-6) var(--space-6) var(--space-7);position:relative;overflow-x:hidden;
   }
-  body::before, body::after{
-    content:''; position:fixed; border-radius:50%; filter:blur(70px); z-index:0; pointer-events:none;
+  body::before,body::after{
+    content:'';position:fixed;border-radius:50%;filter:blur(70px);z-index:0;pointer-events:none;
   }
-  body::before{
-    top:-120px; right:-100px; width:420px; height:420px;
-    background:radial-gradient(circle, rgba(156,111,240,0.28), rgba(255,122,138,0.12) 60%, transparent 75%);
-  }
-  body::after{
-    bottom:-160px; left:-120px; width:480px; height:480px;
-    background:radial-gradient(circle, rgba(91,110,232,0.22), rgba(15,168,174,0.10) 60%, transparent 75%);
-  }
-  body > *{position:relative; z-index:1;}
-  h1{
-    font-size:26px; margin:0 0 2px; letter-spacing:-.01em; font-weight:800;
-    background:linear-gradient(120deg,var(--text) 30%,var(--accent) 75%,var(--coral));
-    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
-  }
-  .subtitle{color:var(--muted); font-size:13px; margin-bottom:var(--space-5);}
-  .topbar{display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:var(--space-4); margin-bottom:var(--space-5);}
-  .filters{display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:flex-end;}
-  .field{display:flex; flex-direction:column; gap:4px;}
-  .field label{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;}
-  select, input[type=date], input[type=number]{
-    background:var(--panel-2); border:1px solid var(--border); color:var(--text);
-    padding:9px 12px; border-radius:10px; font-size:13px; min-width:110px;
-  }
-  select:focus, input:focus{outline:none; border-color:var(--accent);}
-  button{
-    background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#fff; border:none;
-    padding:10px 20px; border-radius:12px; font-size:13px; font-weight:700; cursor:pointer;
-    box-shadow:0 4px 14px var(--accent-glow); transition:transform .15s ease, opacity .15s ease, box-shadow .15s ease;
-  }
-  button:hover{opacity:.94; transform:translateY(-1px); box-shadow:0 6px 18px var(--accent-glow);}
+  body::before{top:-120px;right:-100px;width:420px;height:420px;background:radial-gradient(circle,rgba(156,111,240,0.28),rgba(255,122,138,0.12) 60%,transparent 75%);}
+  body::after{bottom:-160px;left:-120px;width:480px;height:480px;background:radial-gradient(circle,rgba(91,110,232,0.22),rgba(15,168,174,0.10) 60%,transparent 75%);}
+  body>*{position:relative;z-index:1;}
+  h1{font-size:26px;margin:0 0 2px;letter-spacing:-.01em;font-weight:800;background:linear-gradient(120deg,var(--text) 30%,var(--accent) 75%,var(--coral));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .subtitle{color:var(--muted);font-size:13px;margin-bottom:var(--space-5);}
+  .topbar{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:var(--space-4);margin-bottom:var(--space-5);}
+  .filters{display:flex;gap:var(--space-3);flex-wrap:wrap;align-items:flex-end;}
+  .field{display:flex;flex-direction:column;gap:4px;}
+  .field label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+  select,input[type=date],input[type=number]{background:var(--panel-2);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:10px;font-size:13px;min-width:110px;}
+  select:focus,input:focus{outline:none;border-color:var(--accent);}
+  button{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border:none;padding:10px 20px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px var(--accent-glow);transition:transform .15s ease,opacity .15s ease,box-shadow .15s ease;}
+  button:hover{opacity:.94;transform:translateY(-1px);box-shadow:0 6px 18px var(--accent-glow);}
   button:active{transform:scale(.97);}
-  button.secondary{background:var(--panel-2); box-shadow:none; border:1px solid var(--border); color:var(--text);}
-  button.danger{background:var(--panel-2); box-shadow:none; border:1px solid var(--bad-border); color:var(--bad);}
-  button.icon-btn{padding:5px 10px; font-size:12px; border-radius:8px;}
-  .seg{display:flex; border:1px solid var(--border); border-radius:12px; overflow:hidden;}
-  .seg button{background:var(--panel-2); box-shadow:none; border:none; border-radius:0; color:var(--muted); padding:7px 14px; font-weight:600; font-size:12px;}
-  .seg button + button{border-left:1px solid var(--border);}
-  .seg button.active{background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#fff;}
-  #status{font-size:12px; color:var(--muted); margin-bottom:var(--space-4); min-height:16px;}
-  #status.error{color:var(--bad);}
-  #status.loading{color:var(--warn);}
-  #status.cached{color:var(--good);}
-  #top-load-bar{position:fixed; top:0; left:0; height:3px; width:100%; z-index:9999; background:transparent; pointer-events:none; opacity:0; transition:opacity .2s ease;}
+  button.secondary{background:var(--panel-2);box-shadow:none;border:1px solid var(--border);color:var(--text);}
+  .seg{display:flex;border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+  .seg button{background:var(--panel-2);box-shadow:none;border:none;border-radius:0;color:var(--muted);padding:7px 14px;font-weight:600;font-size:12px;}
+  .seg button+button{border-left:1px solid var(--border);}
+  .seg button.active{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;}
+  #status{font-size:12px;color:var(--muted);margin-bottom:var(--space-4);min-height:16px;}
+  #status.error{color:var(--bad);}#status.loading{color:var(--warn);}#status.cached{color:var(--good);}
+  #top-load-bar{position:fixed;top:0;left:0;height:3px;width:100%;z-index:9999;background:transparent;pointer-events:none;opacity:0;transition:opacity .2s ease;}
   #top-load-bar.active{opacity:1;}
-  #top-load-bar .bar{height:100%; width:30%; background:linear-gradient(90deg,var(--accent),var(--accent-2),var(--coral)); animation:load-bar-sweep 1.1s ease-in-out infinite; box-shadow:0 0 8px var(--accent-glow);}
+  #top-load-bar .bar{height:100%;width:30%;background:linear-gradient(90deg,var(--accent),var(--accent-2),var(--coral));animation:load-bar-sweep 1.1s ease-in-out infinite;box-shadow:0 0 8px var(--accent-glow);}
   @keyframes load-bar-sweep{0%{transform:translateX(-100%);}100%{transform:translateX(400%);}}
-  #load-overlay{position:fixed; inset:0; z-index:9998; background:rgba(20,15,35,0.32); backdrop-filter:blur(1.5px); display:flex; align-items:center; justify-content:center; opacity:0; visibility:hidden; transition:opacity .18s ease;}
-  #load-overlay.active{opacity:1; visibility:visible;}
-  #load-overlay .spinner{width:56px; height:56px; border-radius:50%; border:5px solid rgba(255,255,255,0.28); border-top-color:#fff; animation:load-spin .8s linear infinite; box-shadow:0 4px 24px rgba(0,0,0,0.25);}
-  @keyframes load-spin{ to{transform:rotate(360deg);} }
-  .kpi-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:var(--space-3); margin-bottom:var(--space-5);}
-  .kpi-card{position:relative; overflow:hidden; background:linear-gradient(160deg, var(--panel) 55%, var(--accent-kpi-tint, var(--accent-tint)) 180%); border:1px solid var(--border); border-radius:var(--radius); padding:var(--space-4); box-shadow:var(--shadow); transition:transform .2s ease, box-shadow .2s ease; animation:kpi-in .5s cubic-bezier(.2,.7,.3,1) backwards;}
-  @keyframes kpi-in{from{opacity:0; transform:translateY(10px) scale(.97);}to{opacity:1; transform:translateY(0) scale(1);}}
-  @keyframes pulse-dot{0%,100%{opacity:1; transform:scale(1);}50%{opacity:.5; transform:scale(1.3);}}
-  .reactor-icon{display:inline-block; vertical-align:middle; overflow:visible;}
-  .kpi-card::before{content:''; position:absolute; top:0; left:0; right:0; height:4px; border-radius:var(--radius) var(--radius) 0 0; background:var(--accent-kpi, var(--accent));}
-  .kpi-card:hover{transform:translateY(-3px); box-shadow:var(--shadow-hover);}
-  .kpi-card .label{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:var(--space-2); font-weight:600; display:flex; align-items:center; gap:6px;}
-  .kpi-card .icon{font-size:15px; filter:saturate(1.3);}
-  .kpi-card .value{font-size:24px; font-weight:800; letter-spacing:-.01em;}
-  .kpi-card.highlight{border-color:var(--accent); background:linear-gradient(150deg,var(--accent-tint) 0%,var(--accent-tint-strong) 100%);}
-  .mini-stat{display:flex; flex-direction:column; gap:2px; background:linear-gradient(150deg, var(--panel) 50%, var(--mini-tint, var(--accent-tint)) 220%); border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px 14px; min-width:130px; border-left:3px solid var(--mini-accent, var(--accent));}
-  .mini-stat .mini-label{font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; font-weight:700;}
-  .mini-stat .mini-value{font-size:16px; font-weight:800; color:var(--mini-accent, var(--text));}
-  .panels{display:grid; grid-template-columns:1fr 1fr; gap:var(--space-4); margin-bottom:0;}
+  #load-overlay{position:fixed;inset:0;z-index:9998;background:rgba(20,15,35,0.32);backdrop-filter:blur(1.5px);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .18s ease;}
+  #load-overlay.active{opacity:1;visibility:visible;}
+  #load-overlay .spinner{width:56px;height:56px;border-radius:50%;border:5px solid rgba(255,255,255,0.28);border-top-color:#fff;animation:load-spin .8s linear infinite;box-shadow:0 4px 24px rgba(0,0,0,0.25);}
+  @keyframes load-spin{to{transform:rotate(360deg);}}
+  @keyframes kpi-in{from{opacity:0;transform:translateY(10px) scale(.97);}to{opacity:1;transform:translateY(0) scale(1);}}
+  @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.3);}}
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:var(--space-3);margin-bottom:var(--space-5);}
+  .kpi-card{position:relative;overflow:hidden;background:linear-gradient(160deg,var(--panel) 55%,var(--accent-kpi-tint,var(--accent-tint)) 180%);border:1px solid var(--border);border-radius:var(--radius);padding:var(--space-4);box-shadow:var(--shadow);transition:transform .2s ease,box-shadow .2s ease;animation:kpi-in .5s cubic-bezier(.2,.7,.3,1) backwards;}
+  .kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;border-radius:var(--radius) var(--radius) 0 0;background:var(--accent-kpi,var(--accent));}
+  .kpi-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-hover);}
+  .kpi-card .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;font-weight:600;display:flex;align-items:center;gap:6px;}
+  .kpi-card .icon{font-size:15px;}
+  .kpi-card .value{font-size:24px;font-weight:800;letter-spacing:-.01em;}
+  .kpi-card.highlight{border-color:var(--accent);background:linear-gradient(150deg,var(--accent-tint) 0%,var(--accent-tint-strong) 100%);}
+  .mini-stat{display:flex;flex-direction:column;gap:2px;background:linear-gradient(150deg,var(--panel) 50%,var(--mini-tint,var(--accent-tint)) 220%);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 14px;min-width:130px;border-left:3px solid var(--mini-accent,var(--accent));}
+  .mini-stat .mini-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:700;}
+  .mini-stat .mini-value{font-size:16px;font-weight:800;color:var(--mini-accent,var(--text));}
+  .panels{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:0;}
   @media(max-width:900px){.panels{grid-template-columns:1fr;}}
-  .panel{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:var(--space-4); box-shadow:var(--shadow); transition:box-shadow .2s ease, transform .2s ease; animation:kpi-in .5s cubic-bezier(.2,.7,.3,1) backwards;}
-  .panel:hover{box-shadow:var(--shadow-hover); transform:translateY(-2px);}
-  .panel-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--space-4); flex-wrap:wrap; gap:var(--space-3);}
-  .panel h2{font-size:14px; margin:0; color:var(--text); display:flex; align-items:center; gap:8px;}
-  .panel h2::before{content:''; width:5px; height:16px; background:linear-gradient(180deg,var(--accent),var(--accent-2)); border-radius:3px; display:inline-block;}
-  table{width:100%; border-collapse:collapse; font-size:13px;}
-  th, td{text-align:right; padding:9px 10px; border-bottom:1px solid var(--border); white-space:nowrap;}
-  thead th{background:var(--panel-2); border-bottom:2px solid var(--border);}
-  th:first-child, td:first-child{text-align:left;}
-  th{color:var(--muted); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.04em;}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:var(--space-4);box-shadow:var(--shadow);transition:box-shadow .2s ease,transform .2s ease;animation:kpi-in .5s cubic-bezier(.2,.7,.3,1) backwards;}
+  .panel:hover{box-shadow:var(--shadow-hover);transform:translateY(-2px);}
+  .panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-4);flex-wrap:wrap;gap:var(--space-3);}
+  .panel h2{font-size:14px;margin:0;color:var(--text);display:flex;align-items:center;gap:8px;}
+  .panel h2::before{content:'';width:5px;height:16px;background:linear-gradient(180deg,var(--accent),var(--accent-2));border-radius:3px;display:inline-block;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th,td{text-align:right;padding:9px 10px;border-bottom:1px solid var(--border);white-space:nowrap;}
+  thead th{background:var(--panel-2);border-bottom:2px solid var(--border);}
+  th:first-child,td:first-child{text-align:left;}
+  th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em;}
   tbody tr:hover{background:rgba(20,30,60,0.03);}
-  /* Total row styling */
-  tr.total-row td{font-weight:700; background:var(--panel-2); border-top:2px solid var(--border); border-bottom:none;}
+  tr.total-row td{font-weight:700;background:var(--panel-2);border-top:2px solid var(--border);border-bottom:none;}
   tr.total-row td:first-child{color:var(--accent);}
-  .empty-row td{text-align:center; color:var(--muted); padding:var(--space-5);}
-  .full{grid-column:1 / -1;}
-  canvas{width:100%; display:block;}
+  .empty-row td{text-align:center;color:var(--muted);padding:var(--space-5);}
+  .full{grid-column:1/-1;}
+  canvas{width:100%;display:block;}
   .chart-line canvas{height:200px;}
   .chart-bar canvas{height:auto;}
-  .sim-grid{display:grid; grid-template-columns:repeat(3,1fr) auto; gap:var(--space-3); align-items:flex-end;}
-  @media(max-width:900px){.sim-grid{grid-template-columns:repeat(2,1fr);}}
-  .sim-table-wrap{margin-top:20px;}
-  .badge-pill{display:inline-block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; padding:2px 7px; border-radius:999px; background:var(--accent-tint); color:var(--accent); margin-left:6px;}
-  /* RVP partner row highlight */
-  tr.rvp-row td{background:rgba(255,122,138,0.06); border-left:3px solid var(--coral);}
-  tr.rvp-row td:first-child{color:var(--coral); font-weight:700;}
-  .footer-note{color:var(--muted); font-size:11px; margin-top:var(--space-6); text-align:center;}
+  tr.rvp-row td{background:rgba(255,122,138,0.06);border-left:3px solid var(--coral);}
+  tr.rvp-row td:first-child{color:var(--coral);font-weight:700;}
+  .footer-note{color:var(--muted);font-size:11px;margin-top:var(--space-6);text-align:center;}
   .section-block{margin-top:var(--space-7);}
   .section-block:first-of-type{margin-top:var(--space-6);}
-  .section-eyebrow{display:flex; align-items:center; gap:var(--space-3); margin-bottom:var(--space-4);}
-  .section-eyebrow .num{font-size:11px; font-weight:700; color:#fff; background:linear-gradient(135deg,var(--accent),var(--accent-2)); border-radius:999px; width:24px; height:24px; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 2px 6px var(--accent-glow);}
-  .section-eyebrow h2{font-size:13px; margin:0; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); font-weight:700;}
-  .section-eyebrow::after{content:''; flex:1; height:1px; background:var(--border);}
+  .section-eyebrow{display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-4);}
+  .section-eyebrow .num{font-size:11px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent-2));border-radius:999px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 6px var(--accent-glow);}
+  .section-eyebrow h2{font-size:13px;margin:0;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700;}
+  .section-eyebrow::after{content:'';flex:1;height:1px;background:var(--border);}
+  .reactor-icon{display:inline-block;vertical-align:middle;overflow:visible;}
 </style>
 </head>
 <body>
 
-  <div id="top-load-bar"><div class="bar"></div></div>
-  <div id="load-overlay"><div class="spinner"></div></div>
+<div id="top-load-bar"><div class="bar"></div></div>
+<div id="load-overlay"><div class="spinner"></div></div>
 
-  <div class="topbar">
-    <div>
-      <h1 style="display:flex; align-items:center; gap:4px;">
-        <svg class="reactor-icon" xmlns="http://www.w3.org/2000/svg" viewBox="164 164 672 672" width="42" height="42">
+<div class="topbar">
+  <div>
+    <h1 style="display:flex;align-items:center;gap:4px;">
+      <svg class="reactor-icon" xmlns="http://www.w3.org/2000/svg" viewBox="164 164 672 672" width="42" height="42">
 <defs>
-  <radialGradient id="core2" cx="50%" cy="50%">
-    <stop offset="0" stop-color="#ffffff"/><stop offset=".12" stop-color="#ffffff"/><stop offset=".28" stop-color="#f3e2ff"/><stop offset=".55" stop-color="#b473ff"/><stop offset=".78" stop-color="#7a1fe0"/><stop offset="1" stop-color="#440f8a"/>
-  </radialGradient>
-  <linearGradient id="metal2" x1="0" y1="0" x2="1" y2="1">
-    <stop stop-color="#eceaf3"/><stop offset=".12" stop-color="#6a5f79"/><stop offset=".28" stop-color="#1e1729"/><stop offset=".48" stop-color="#b8aec1"/><stop offset=".62" stop-color="#332a42"/><stop offset=".82" stop-color="#d0c7d7"/><stop offset="1" stop-color="#302639"/>
-  </linearGradient>
-  <linearGradient id="gold2" x1="0" y1="0" x2="1" y2="1">
-    <stop stop-color="#f0cf7f"/><stop offset=".45" stop-color="#8a5b1f"/><stop offset="1" stop-color="#e6b95b"/>
-  </linearGradient>
+  <radialGradient id="core2" cx="50%" cy="50%"><stop offset="0" stop-color="#ffffff"/><stop offset=".12" stop-color="#ffffff"/><stop offset=".28" stop-color="#f3e2ff"/><stop offset=".55" stop-color="#b473ff"/><stop offset=".78" stop-color="#7a1fe0"/><stop offset="1" stop-color="#440f8a"/></radialGradient>
+  <linearGradient id="metal2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#eceaf3"/><stop offset=".12" stop-color="#6a5f79"/><stop offset=".28" stop-color="#1e1729"/><stop offset=".48" stop-color="#b8aec1"/><stop offset=".62" stop-color="#332a42"/><stop offset=".82" stop-color="#d0c7d7"/><stop offset="1" stop-color="#302639"/></linearGradient>
+  <linearGradient id="gold2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f0cf7f"/><stop offset=".45" stop-color="#8a5b1f"/><stop offset="1" stop-color="#e6b95b"/></linearGradient>
   <filter id="glow2" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
   <filter id="bigGlow2" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="28"/></filter>
-  <style>
-    .pulse2{animation:pulse2 1.65s ease-in-out infinite;transform-origin:500px 500px}
-    .spin2{animation:spin2 9s linear infinite;transform-origin:500px 500px}
-    .spinR2{animation:spinR2 13s linear infinite;transform-origin:500px 500px}
-    .flicker2{animation:flicker2 1.15s ease-in-out infinite}
-    @keyframes pulse2{0%,100%{opacity:.82;transform:scale(.99)}50%{opacity:1;transform:scale(1.018)}}
-    @keyframes spin2{to{transform:rotate(360deg)}}
-    @keyframes spinR2{to{transform:rotate(-360deg)}}
-    @keyframes flicker2{0%,100%{opacity:.72}45%{opacity:1}60%{opacity:.82}}
-    @media(prefers-reduced-motion:reduce){.pulse2,.spin2,.spinR2,.flicker2{animation:none}}
-  </style>
+  <style>.pulse2{animation:pulse2 1.65s ease-in-out infinite;transform-origin:500px 500px}.spin2{animation:spin2 9s linear infinite;transform-origin:500px 500px}.spinR2{animation:spinR2 13s linear infinite;transform-origin:500px 500px}.flicker2{animation:flicker2 1.15s ease-in-out infinite}@keyframes pulse2{0%,100%{opacity:.82;transform:scale(.99)}50%{opacity:1;transform:scale(1.018)}}@keyframes spin2{to{transform:rotate(360deg)}}@keyframes spinR2{to{transform:rotate(-360deg)}}@keyframes flicker2{0%,100%{opacity:.72}45%{opacity:1}60%{opacity:.82}}@media(prefers-reduced-motion:reduce){.pulse2,.spin2,.spinR2,.flicker2{animation:none}}</style>
 </defs>
 <g class="pulse2">
   <circle cx="500" cy="500" r="330" fill="#a259ff" opacity=".11" filter="url(#bigGlow2)"/>
@@ -192,619 +148,441 @@
   <g class="spin2" fill="none" stroke="#c073ff" stroke-width="4" opacity=".65"><path d="M328 420 A180 180 0 0 1 420 328"/><path d="M580 672 A180 180 0 0 1 672 580"/></g>
 </g>
 </svg>
-        STARK
-      </h1>
-      <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); margin:-2px 0 4px 2px;">3PL Costing Dashboard</div>
-      <div class="subtitle">
-        Forward + Reverse logistics cost across partners
-        <span style="display:inline-flex; align-items:center; gap:5px; margin-left:10px; padding:2px 9px; border-radius:999px; background:var(--good-tint); color:var(--good); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; vertical-align:middle;">
-          <span style="width:6px; height:6px; border-radius:50%; background:var(--good); display:inline-block; animation:pulse-dot 1.6s ease-in-out infinite;"></span> Live
-        </span>
-      </div>
-    </div>
-
-    <div class="filters">
-      <div class="field"><label>Partner</label><select id="f-partner"><option value="All">All</option></select></div>
-      <div class="field"><label>Zone</label><select id="f-zone"><option value="All">All</option></select></div>
-      <div class="field">
-        <label>Shipment Type</label>
-        <select id="f-type">
-          <option value="Combined">Overall</option>
-          <option value="Forward">Forward</option>
-          <option value="Reverse">Reverse</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Payment Mode</label>
-        <select id="f-payment">
-          <option value="All">All</option>
-          <option value="COD">COD</option>
-          <option value="Prepaid">Prepaid</option>
-        </select>
-      </div>
-      <div class="field"><label>From</label><input type="date" id="f-from"></div>
-      <div class="field"><label>To</label><input type="date" id="f-to"></div>
-      <button id="btn-reset" class="secondary">Reset</button>
+      STARK
+    </h1>
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:-2px 0 4px 2px;">3PL Costing Dashboard</div>
+    <div class="subtitle">
+      Forward + Reverse logistics cost across partners · Box-driven blended rates
+      <span style="display:inline-flex;align-items:center;gap:5px;margin-left:10px;padding:2px 9px;border-radius:999px;background:var(--good-tint);color:var(--good);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;vertical-align:middle;">
+        <span style="width:6px;height:6px;border-radius:50%;background:var(--good);display:inline-block;animation:pulse-dot 1.6s ease-in-out infinite;"></span> Live
+      </span>
     </div>
   </div>
-
-  <div id="status"></div>
-
-  <div class="section-block" id="section-overview">
-    <div class="section-eyebrow"><span class="num">1</span><h2>Overview</h2></div>
-    <div class="kpi-grid" id="kpi-grid"></div>
+  <div class="filters">
+    <div class="field"><label>Partner</label><select id="f-partner"><option value="All">All</option></select></div>
+    <div class="field">
+      <label>Shipment Type</label>
+      <select id="f-type">
+        <option value="Combined">Overall</option>
+        <option value="Forward">Forward</option>
+        <option value="Reverse">Reverse</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Payment Mode</label>
+      <select id="f-payment">
+        <option value="All">All</option>
+        <option value="COD">COD</option>
+        <option value="Prepaid">Prepaid</option>
+      </select>
+    </div>
+    <div class="field"><label>From</label><input type="date" id="f-from"></div>
+    <div class="field"><label>To</label><input type="date" id="f-to"></div>
+    <button id="btn-reset" class="secondary">Reset</button>
   </div>
+</div>
 
-  <div class="section-block" id="section-breakdown">
-    <div class="section-eyebrow"><span class="num">2</span><h2>Cost Breakdown</h2></div>
-    <div class="panels">
-      <div class="panel">
-        <!-- CPOL moved to last column; Total row added at bottom -->
-        <h2>Partner-wise <span style="color:var(--good); font-size:11px; font-weight:600; text-transform:none;">(sorted by lowest CPOL)</span></h2>
-        <div style="font-size:11px; color:var(--muted); margin-bottom:8px;">
-          <span style="display:inline-block; width:10px; height:10px; border-radius:2px; background:var(--coral); margin-right:4px; vertical-align:middle;"></span>
-          RVP rows show cumulative RVP CPO (separate service, not included in CPOL)
+<div id="status"></div>
+
+<!-- SECTION 1: OVERVIEW -->
+<div class="section-block">
+  <div class="section-eyebrow"><span class="num">1</span><h2>Overview</h2></div>
+  <div class="kpi-grid" id="kpi-grid"></div>
+</div>
+
+<!-- SECTION 2: PARTNER BREAKDOWN -->
+<div class="section-block">
+  <div class="section-eyebrow"><span class="num">2</span><h2>Cost Breakdown</h2></div>
+  <div class="panel full">
+    <h2>Partner-wise <span style="color:var(--good);font-size:11px;font-weight:600;text-transform:none;">(sorted by lowest CPOL)</span></h2>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">
+      <span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--coral);margin-right:4px;vertical-align:middle;"></span>
+      RVP rows show cumulative RVP CPO (separate service, not included in CPOL) &nbsp;·&nbsp; Rates = Jul-26 invoice blended (box-mix weighted)
+    </div>
+    <table id="tbl-partner">
+      <thead>
+        <tr>
+          <th>Partner</th>
+          <th>Orders</th>
+          <th>Forward Cost</th>
+          <th>Reverse Cost</th>
+          <th>Total Cost</th>
+          <th style="color:var(--teal);">Fwd CPO</th>
+          <th style="color:var(--coral);">Rev CPO</th>
+          <th id="th-cpol">CPOL</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SECTION 3: TRENDS -->
+<div class="section-block">
+  <div class="section-eyebrow"><span class="num">3</span><h2>Trends &amp; Comparisons</h2></div>
+  <div class="panels">
+    <div class="panel full">
+      <div class="panel-head">
+        <h2 id="trend-title">CPOL &amp; Order Volume Trend</h2>
+        <div class="seg" id="granularity-seg">
+          <button data-gran="day" class="active">Daily</button>
+          <button data-gran="week">Weekly</button>
+          <button data-gran="month">Monthly</button>
         </div>
-        <table id="tbl-partner">
+      </div>
+      <div class="panels" style="margin-bottom:0;">
+        <div class="chart-line">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">CPOL Trend</div>
+          <canvas id="trend-cpol-canvas" width="1100" height="200"></canvas>
+        </div>
+        <div class="chart-line">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">Order Volume Trend</div>
+          <canvas id="trend-orders-canvas" width="1100" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="panel" id="pie-panel" style="position:relative;">
+      <h2>Total Cost Share by Partner</h2>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:10px;">% of overall spend — hover for details</div>
+      <canvas id="chart-partner-pie" width="400" height="260" style="max-height:260px;"></canvas>
+      <div id="pie-tooltip" style="display:none;position:absolute;pointer-events:none;background:var(--text);color:#fff;font-size:12px;padding:6px 10px;border-radius:6px;white-space:nowrap;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,0.2);"></div>
+      <div id="pie-legend" style="display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:10px;font-size:12px;"></div>
+    </div>
+    <div class="panel">
+      <h2>CPOL by Partner <span style="color:var(--good);font-size:11px;font-weight:600;text-transform:none;">(greenest = cheapest)</span></h2>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Route more volume to the cheapest partner</div>
+      <div class="chart-bar"><canvas id="chart-partner-cpol"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 4: ALLOCATION SIMULATOR -->
+<div class="section-block">
+  <div class="section-eyebrow"><span class="num">4</span><h2>Cost Simulator</h2></div>
+  <div class="panels">
+    <div class="panel full">
+      <div class="panel-head">
+        <h2>Allocation Simulator</h2>
+        <button id="btn-alloc-reset" class="secondary">Reset</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:var(--space-4);margin-bottom:20px;">
+        <div class="field">
+          <label>Target CPOL</label>
+          <input type="number" id="alloc-target-cpo" placeholder="Enter target CPOL" min="0" step="0.01" style="width:100%;">
+        </div>
+        <div class="field">
+          <label>Total Volume</label>
+          <input type="number" id="alloc-total-volume" placeholder="Enter total volume" min="0" step="1" style="width:100%;">
+        </div>
+        <div class="field">
+          <label>Input Mode</label>
+          <select id="alloc-input-mode" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--panel);color:var(--text);font-size:13px;">
+            <option value="volume">Enter Volume</option>
+            <option value="pct">Enter Percentage %</option>
+          </select>
+        </div>
+        <div class="field" style="position:relative;">
+          <label>Delivery Partners</label>
+          <button type="button" id="alloc-partner-dd-btn" style="width:100%;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-size:13px;text-align:left;display:flex;justify-content:space-between;align-items:center;cursor:pointer;box-shadow:none;font-weight:400;">
+            <span id="alloc-partner-dd-label">Select partners…</span>
+            <span style="color:var(--muted);font-size:11px;">▾</span>
+          </button>
+          <div id="alloc-partner-dd-panel" style="display:none;position:absolute;top:100%;left:0;right:0;margin-top:4px;background:var(--panel);border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow);z-index:20;min-width:220px;max-height:260px;overflow-y:auto;padding:6px;"></div>
+        </div>
+      </div>
+      <div style="margin-bottom:10px;display:flex;align-items:center;gap:12px;">
+        <div style="flex:1;height:6px;border-radius:99px;background:var(--border);overflow:hidden;">
+          <div id="alloc-total-bar" style="height:100%;width:0%;border-radius:99px;transition:width 0.2s,background 0.2s;background:var(--accent-2);"></div>
+        </div>
+        <span id="alloc-total-pct" style="font-size:12px;font-weight:600;min-width:130px;text-align:right;color:var(--muted);">0.0% allocated</span>
+      </div>
+      <div style="overflow-x:auto;margin-top:0;">
+        <table id="tbl-alloc" style="min-width:1000px;">
           <thead>
             <tr>
               <th>Partner</th>
-              <th>Orders</th>
-              <th>Forward Cost</th>
-              <th>Reverse Cost</th>
-              <th>Total Cost</th>
-              <th style="color:var(--teal);">Fwd CPO</th>
-              <th style="color:var(--coral);">Rev CPO</th>
-              <th id="th-cpol">CPOL</th>
+              <th>Prev Alloc %</th>
+              <th>Ideal Volume (Ideal %)</th>
+              <th id="th-input-volume">Volume</th>
+              <th id="th-input-pct">Vol %</th>
+              <th>Applicable CPOL</th>
+              <th>Historical CPOL</th>
+              <th>Ideal CPOL</th>
             </tr>
           </thead>
           <tbody></tbody>
         </table>
       </div>
-      <div class="panel">
-        <h2>Zone-wise</h2>
-        <table id="tbl-zone">
-          <thead><tr><th>Zone</th><th>Orders</th><th>Forward Cost</th><th>Reverse Cost</th><th>Total Cost</th><th>CPOL</th></tr></thead>
-          <tbody></tbody>
-        </table>
+      <div style="display:flex;justify-content:flex-end;gap:12px;flex-wrap:wrap;margin-top:18px;">
+        <div class="mini-stat" style="min-width:180px;--mini-accent:var(--accent-2);--mini-tint:var(--accent-tint-strong);">
+          <span class="mini-label">Projected Cost</span>
+          <span class="mini-value" id="alloc-projected-cost">—</span>
+        </div>
+        <div class="mini-stat" style="min-width:180px;--mini-accent:var(--teal);--mini-tint:var(--teal-tint);">
+          <span class="mini-label">Ideal Net CPOL</span>
+          <span class="mini-value" id="alloc-ideal-net-cpol">—</span>
+        </div>
+        <div class="mini-stat" style="min-width:180px;--mini-accent:var(--coral);--mini-tint:var(--coral-tint);">
+          <span class="mini-label">Net CPOL</span>
+          <span class="mini-value" id="alloc-net-cpol">—</span>
+        </div>
       </div>
-      <div class="panel full">
-        <h2>Partner &times; Zone (Total Cost)</h2>
-        <table id="tbl-matrix"><thead></thead><tbody></tbody></table>
-      </div>
+      <div id="alloc-validation-warning" style="display:none;margin-top:14px;padding:12px 16px;border-radius:var(--radius-sm);font-size:12px;background:var(--bad-tint-strong);border:1px solid var(--bad-border);color:var(--bad);font-weight:600;"></div>
     </div>
   </div>
+</div>
 
-  <div class="section-block" id="section-trends">
-    <div class="section-eyebrow"><span class="num">3</span><h2>Trends &amp; Comparisons</h2></div>
-    <div class="panels">
-      <div class="panel full">
-        <div class="panel-head">
-          <h2 id="trend-title">CPOL &amp; Order Volume Trend</h2>
-          <div class="seg" id="granularity-seg">
-            <button data-gran="day" class="active">Daily</button>
-            <button data-gran="week">Weekly</button>
-            <button data-gran="month">Monthly</button>
-          </div>
-        </div>
-        <div class="panels" style="margin-bottom:0;">
-          <div class="chart-line">
-            <div style="font-size:11px; color:var(--muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:.05em;">CPOL Trend</div>
-            <canvas id="trend-cpol-canvas" width="1100" height="200"></canvas>
-          </div>
-          <div class="chart-line">
-            <div style="font-size:11px; color:var(--muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:.05em;">Order Volume Trend</div>
-            <canvas id="trend-orders-canvas" width="1100" height="200"></canvas>
-          </div>
-        </div>
-      </div>
-      <div class="panel" id="pie-panel" style="position:relative;">
-        <h2>Total Cost Share by Partner</h2>
-        <div style="font-size:11px; color:var(--muted); margin-bottom:10px;">% of overall spend — hover a slice for details</div>
-        <canvas id="chart-partner-pie" width="400" height="260" style="max-height:260px;"></canvas>
-        <div id="pie-tooltip" style="display:none; position:absolute; pointer-events:none; background:var(--text); color:#fff; font-size:12px; padding:6px 10px; border-radius:6px; white-space:nowrap; z-index:10; box-shadow:0 4px 12px rgba(0,0,0,0.2);"></div>
-        <div id="pie-legend" style="display:flex; flex-wrap:wrap; gap:8px 14px; margin-top:10px; font-size:12px;"></div>
-      </div>
-      <div class="panel">
-        <h2>CPOL by Partner <span style="color:var(--good); font-size:11px; font-weight:600; text-transform:none;">(greenest = cheapest)</span></h2>
-        <div style="font-size:11px; color:var(--muted); margin-bottom:10px;">Sorted lowest first — cheapest partner to route more orders to</div>
-        <div class="chart-bar"><canvas id="chart-partner-cpol"></canvas></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section-block" id="section-simulator">
-    <div class="section-eyebrow"><span class="num">4</span><h2>Cost Simulator</h2></div>
-    <div class="panels">
-      <div class="panel full">
-        <div class="panel-head">
-          <h2>Allocation Simulator</h2>
-          <button id="btn-alloc-reset" class="secondary">Reset</button>
-        </div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:var(--space-4);margin-bottom:20px;">
-          <div class="field">
-            <label>Target CPOL</label>
-            <input type="number" id="alloc-target-cpo" placeholder="Enter target CPOL" min="0" step="0.01" style="width:100%;">
-          </div>
-          <div class="field">
-            <label>Total Volume</label>
-            <input type="number" id="alloc-total-volume" placeholder="Enter total volume" min="0" step="1" style="width:100%;">
-          </div>
-          <div class="field">
-            <label>Input Mode</label>
-            <select id="alloc-input-mode" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--panel);color:var(--text);font-size:13px;">
-              <option value="volume">Enter Volume</option>
-              <option value="pct">Enter Percentage %</option>
-            </select>
-          </div>
-          <div class="field" style="position:relative;">
-            <label>Delivery Partners</label>
-            <button type="button" id="alloc-partner-dd-btn" style="width:100%;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-size:13px;text-align:left;display:flex;justify-content:space-between;align-items:center;cursor:pointer;box-shadow:none;font-weight:400;">
-              <span id="alloc-partner-dd-label">Select partners…</span>
-              <span style="color:var(--muted);font-size:11px;">▾</span>
-            </button>
-            <div id="alloc-partner-dd-panel" style="display:none;position:absolute;top:100%;left:0;right:0;margin-top:4px;background:var(--panel);border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow);z-index:20;min-width:220px;max-height:260px;overflow-y:auto;padding:6px;"></div>
-          </div>
-        </div>
-
-        <!-- Live 100% allocation bar -->
-        <div style="margin-bottom:10px;display:flex;align-items:center;gap:12px;">
-          <div style="flex:1;height:6px;border-radius:99px;background:var(--border);overflow:hidden;">
-            <div id="alloc-total-bar" style="height:100%;width:0%;border-radius:99px;transition:width 0.2s,background 0.2s;background:var(--accent-2);"></div>
-          </div>
-          <span id="alloc-total-pct" style="font-size:12px;font-weight:600;min-width:130px;text-align:right;color:var(--muted);">0.0% allocated</span>
-        </div>
-        <div class="sim-table-wrap" style="overflow-x:auto;margin-top:0;">
-          <table id="tbl-alloc" style="min-width:1000px;border-radius:var(--radius-sm);overflow:hidden;">
-            <thead>
-              <tr>
-                <th>Partner</th>
-                <th>Prev Alloc %</th>
-                <th>Ideal Volume (Ideal %)</th>
-                <th id="th-input-volume">Volume</th>
-                <th id="th-input-pct">Vol %</th>
-                <th>Applicable CPOL</th>
-                <th>Historical CPOL</th>
-                <th>Ideal CPOL</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-
-        <div style="display:flex;justify-content:flex-end;gap:12px;flex-wrap:wrap;margin-top:18px;">
-          <div class="mini-stat" style="min-width:180px;--mini-accent:var(--accent-2);--mini-tint:var(--accent-tint-strong);">
-            <span class="mini-label">Projected Cost</span>
-            <span class="mini-value" id="alloc-projected-cost">—</span>
-          </div>
-          <div class="mini-stat" style="min-width:180px;--mini-accent:var(--teal);--mini-tint:var(--teal-tint);">
-            <span class="mini-label">Ideal Net CPOL</span>
-            <span class="mini-value" id="alloc-ideal-net-cpol">—</span>
-          </div>
-          <div class="mini-stat" style="min-width:180px;--mini-accent:var(--coral);--mini-tint:var(--coral-tint);">
-            <span class="mini-label">Net CPOL</span>
-            <span class="mini-value" id="alloc-net-cpol">—</span>
-          </div>
-        </div>
-
-        <div id="alloc-validation-warning" style="display:none;margin-top:14px;padding:12px 16px;border-radius:var(--radius-sm);font-size:12px;background:var(--bad-tint-strong);border:1px solid var(--bad-border);color:var(--bad);font-weight:600;"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="footer-note">Data source: Forward / Reverse / Rate Card sheets, computed live via Apps Script. RVP shown separately — not included in CPOL.</div>
+<div class="footer-note">Data source: Forward / Reverse / Rate Card sheets — blended rates from Partner Weight Config (box mix–weighted, Jul-26 invoice verified). RVP shown separately — not included in CPOL.</div>
 
 <script>
 function round2(n){return Math.round(n*100)/100;}
-const API_URL = 'https://script.google.com/macros/s/AKfycbxEeNAN-0yOXXtx1j4eKAZ7fV-0IB2igNchXLYv4XVObZ0LVHWWHKl0MQCPDUT18Y3hCw/exec';
-const CUR = '₹';
-const BAR_COLORS = ['#5b6ee8','#9c6ff0','#ff7a8a','#22a06b','#e8a53d','#0fa8ae','#e0729c','#8fae4f'];
+const API_URL='https://script.google.com/macros/s/AKfycbxEeNAN-0yOXXtx1j4eKAZ7fV-0IB2igNchXLYv4XVObZ0LVHWWHKl0MQCPDUT18Y3hCw/exec';
+const CUR='₹';
+const BAR_COLORS=['#5b6ee8','#9c6ff0','#ff7a8a','#22a06b','#e8a53d','#0fa8ae','#e0729c','#8fae4f'];
 
-// Simulated RVP data — until a dedicated RVP sheet/API exists,
-// this acts as a placeholder row in the partner table showing RVP CPO.
-// Replace with real API data when available.
-const RVP_PLACEHOLDER = null; // set to e.g. { rvpOrders: 12000, rvpCost: 480000 } when available
+function hexToRgba(hex,alpha){const h=hex.replace('#','');const r=parseInt(h.substring(0,2),16),g=parseInt(h.substring(2,4),16),b=parseInt(h.substring(4,6),16);return 'rgba('+r+','+g+','+b+','+alpha+')';}
 
-function hexToRgba(hex, alpha){
-  const h = hex.replace('#','');
-  const r = parseInt(h.substring(0,2),16), g = parseInt(h.substring(2,4),16), b = parseInt(h.substring(4,6),16);
-  return 'rgba('+r+','+g+','+b+','+alpha+')';
+let currentGranularity='day';
+const dashboardCache=new Map();
+
+function fmtMoney(n){if(n==null||!isFinite(n))return'—';return CUR+(n/100000).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})+'L';}
+function fmtNum(n){if(n==null||!isFinite(n))return'—';return(n/100000).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})+'L';}
+function fmtRate(n){if(n==null||!isFinite(n))return'—';return CUR+n.toLocaleString('en-IN',{maximumFractionDigits:2});}
+
+function setStatus(msg,cls){
+  const el=document.getElementById('status');
+  el.textContent=msg||'';el.className=cls||'';
+  document.getElementById('top-load-bar').classList.toggle('active',cls==='loading');
+  document.getElementById('load-overlay').classList.toggle('active',cls==='loading');
 }
 
-let partnerPricingType = {};
-let currentGranularity = 'day';
-const dashboardCache = new Map();
-
-function fmtMoney(n){
-  if(n == null || !isFinite(n)) return '—';
-  return CUR + (n / 100000).toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2}) + 'L';
-}
-function fmtNum(n){
-  if(n == null || !isFinite(n)) return '—';
-  return (n / 100000).toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2}) + 'L';
-}
-function fmtRate(n){
-  if(n == null || !isFinite(n)) return '—';
-  return CUR + n.toLocaleString('en-IN', {maximumFractionDigits:2});
-}
-
-function setStatus(msg, cls){
-  const el = document.getElementById('status');
-  el.textContent = msg || '';
-  el.className = cls || '';
-  document.getElementById('top-load-bar').classList.toggle('active', cls === 'loading');
-  document.getElementById('load-overlay').classList.toggle('active', cls === 'loading');
-}
-
-async function apiGet(action, params){
-  const url = new URL(API_URL);
-  url.searchParams.set('action', action);
-  Object.keys(params || {}).forEach(k => {
-    if (params[k] !== undefined && params[k] !== null && params[k] !== '')
-      url.searchParams.set(k, params[k]);
+async function apiGet(action,params){
+  const url=new URL(API_URL);
+  url.searchParams.set('action',action);
+  Object.keys(params||{}).forEach(k=>{
+    if(params[k]!==undefined&&params[k]!==null&&params[k]!=='')url.searchParams.set(k,params[k]);
   });
-  const res = await fetch(url.toString(), { method: 'GET' });
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  const data = await res.json();
-  if (data && data.error) throw new Error(data.error);
+  const res=await fetch(url.toString(),{method:'GET'});
+  if(!res.ok)throw new Error('HTTP '+res.status);
+  const data=await res.json();
+  if(data&&data.error)throw new Error(data.error);
   return data;
 }
 
-let allPartners = [];
+let allPartners=[];
 
+// v9: Zone filter removed — loadFilters no longer populates zone dropdown
 async function loadFilters(){
-  const f = await apiGet('filters', {});
-  const partnerSel = document.getElementById('f-partner');
-  const zoneSel = document.getElementById('f-zone');
-  allPartners = f.partners || [];
-  allPartners.forEach(p => partnerSel.appendChild(new Option(p, p)));
-  (f.zones || []).forEach(z => zoneSel.appendChild(new Option(z, z)));
-  partnerPricingType = f.partnerPricingType || {};
-  if (f.dateMin) document.getElementById('f-from').value = f.dateMin.slice(0,10);
-  if (f.dateMax) document.getElementById('f-to').value = f.dateMax.slice(0,10);
-  // FIX: renderAllocPartnerChips() removed — function does not exist in this file.
-  // The partner dropdown is populated by renderAllocPartnerDropdown() inside
-  // renderAllocTable(), which initialiseAllocationSimulator() calls after loadFilters().
+  const f=await apiGet('filters',{});
+  const partnerSel=document.getElementById('f-partner');
+  allPartners=f.partners||[];
+  allPartners.forEach(p=>partnerSel.appendChild(new Option(p,p)));
+  if(f.dateMin)document.getElementById('f-from').value=f.dateMin.slice(0,10);
+  if(f.dateMax)document.getElementById('f-to').value=f.dateMax.slice(0,10);
 }
 
+// v9: zone removed from filters
 function currentFilters(){
   return {
-    partner: document.getElementById('f-partner').value,
-    zone: document.getElementById('f-zone').value,
+    partner:      document.getElementById('f-partner').value,
     shipmentType: document.getElementById('f-type').value,
-    paymentMode: document.getElementById('f-payment').value,
-    dateFrom: document.getElementById('f-from').value,
-    dateTo: document.getElementById('f-to').value,
-    granularity: currentGranularity
+    paymentMode:  document.getElementById('f-payment').value,
+    dateFrom:     document.getElementById('f-from').value,
+    dateTo:       document.getElementById('f-to').value,
+    granularity:  currentGranularity
   };
 }
 
-/* KPI cards */
-const KPI_DEFS = [
-  ['totalOrders','Total Orders', fmtNum, false, 'var(--accent)', 'var(--accent-tint)', '📦'],
-  ['forwardOrders','Forward Orders', fmtNum, false, 'var(--teal)', 'var(--teal-tint)', '🚚'],
-  ['reverseOrders','Reverse Orders', fmtNum, false, 'var(--warn)', 'var(--warn-tint)', '↩️'],
-  ['forwardCost','Forward Cost', fmtMoney, false, 'var(--teal)', 'var(--teal-tint)', '💸'],
-  ['reverseCost','Reverse Cost', fmtMoney, false, 'var(--warn)', 'var(--warn-tint)', '🔁'],
-  ['totalCost','Total Cost', fmtMoney, true, 'var(--accent-2)', 'var(--accent-tint-strong)', '💰'],
-  ['returnPct','Return %', v => (Number(v)||0).toFixed(2) + '%', false, 'var(--warn)', 'var(--warn-tint)', '📉'],
-  ['cpol','CPOL', fmtRate, true, 'var(--coral)', 'var(--coral-tint)', '🎯']  // CPOL last
+const KPI_DEFS=[
+  ['totalOrders','Total Orders',fmtNum,false,'var(--accent)','var(--accent-tint)','📦'],
+  ['forwardOrders','Forward Orders',fmtNum,false,'var(--teal)','var(--teal-tint)','🚚'],
+  ['reverseOrders','Reverse Orders',fmtNum,false,'var(--warn)','var(--warn-tint)','↩️'],
+  ['forwardCost','Forward Cost',fmtMoney,false,'var(--teal)','var(--teal-tint)','💸'],
+  ['reverseCost','Reverse Cost',fmtMoney,false,'var(--warn)','var(--warn-tint)','🔁'],
+  ['totalCost','Total Cost',fmtMoney,true,'var(--accent-2)','var(--accent-tint-strong)','💰'],
+  ['returnPct','Return %',v=>(Number(v)||0).toFixed(2)+'%',false,'var(--warn)','var(--warn-tint)','📉'],
+  ['cpol','CPOL',fmtRate,true,'var(--coral)','var(--coral-tint)','🎯']
 ];
 
 function renderKpis(kpis){
-  const grid = document.getElementById('kpi-grid');
-  grid.innerHTML = '';
-  KPI_DEFS.forEach(([key, label, fmt, highlight, color, tint, icon], i) => {
-    const card = document.createElement('div');
-    card.className = 'kpi-card' + (highlight ? ' highlight' : '');
-    if (color) card.style.setProperty('--accent-kpi', color);
-    if (tint) card.style.setProperty('--accent-kpi-tint', tint);
-    card.style.animationDelay = (i * 0.05) + 's';
-    card.innerHTML = '<div class="label"><span class="icon">'+(icon||'')+'</span>'+label+'</div><div class="value">'+fmt(kpis[key])+'</div>';
+  const grid=document.getElementById('kpi-grid');
+  grid.innerHTML='';
+  KPI_DEFS.forEach(([key,label,fmt,highlight,color,tint,icon],i)=>{
+    const card=document.createElement('div');
+    card.className='kpi-card'+(highlight?' highlight':'');
+    if(color)card.style.setProperty('--accent-kpi',color);
+    if(tint)card.style.setProperty('--accent-kpi-tint',tint);
+    card.style.animationDelay=(i*0.05)+'s';
+    card.innerHTML='<div class="label"><span class="icon">'+(icon||'')+'</span>'+label+'</div><div class="value">'+fmt(kpis[key])+'</div>';
     grid.appendChild(card);
   });
 }
 
-/* Tables */
-function renderRowsTable(tableId, rows, highlightBestRow, showTotalRow){
-  const tbody = document.querySelector('#'+tableId+' tbody');
-  tbody.innerHTML = '';
-
-  // Filter NULL zone
-  if (tableId === 'tbl-zone') {
-    rows = (rows || []).filter(r => r[0] !== 'NULL' && r[0] !== 'null' && r[0] !== '');
-  }
-
-  // For partner table: separate RVP from regular partners
-  // RVP is displayed at the bottom, highlighted, and EXCLUDED from the Total row
-  let rvpRow = null;
-  if (tableId === 'tbl-partner') {
-    // Keep any row that has orders OR costs — r[1]=totalOrders can round to 0
-    // for very small counts, so also check rtoOrders (r[8]) and rvpOrders (r[9])
-    rows = (rows || []).filter(r => r[1] > 0 || r[2] > 0 || r[4] > 0 || (r[8]||0) > 0 || (r[9]||0) > 0);
-    const rvpIdx = rows.findIndex(r => r[0] === 'RVP');
-    if (rvpIdx >= 0) {
-      rvpRow = rows[rvpIdx];
-      rows = rows.filter((_,i) => i !== rvpIdx); // remove RVP from main list
-    }
-  }
-
-  if (!rows || !rows.length){
-    const colCount = tableId === 'tbl-partner' ? 8 : 6;
-    tbody.innerHTML = '<tr class="empty-row"><td colspan="'+colCount+'">No data for this filter selection</td></tr>';
-    return;
-  }
-
-  // Accumulate totals for the total row
-  // r[0]=partner r[1]=totalOrders r[2]=fwdCost r[3]=revCost(RTO) r[4]=totalCost
-  // r[5]=CPOL r[6]=fwdCPO r[7]=rtoCPO r[8]=rtoOrders r[9]=rvpOrders r[10]=rvpCPO
-  let totOrders=0, totFwd=0, totRev=0, totTotal=0;
-  let totFwdOrders=0, totRtoOrders=0; // for weighted CPO/CPOL in total row
-
-  rows.forEach((r, i) => {
-    const tr = document.createElement('tr');
-    const isBest = highlightBestRow && i === 0 && r[5] > 0;
-    if (isBest) { tr.style.background = 'var(--good-tint)'; tr.style.borderLeft = '3px solid var(--good)'; }
-
-    if (tableId === 'tbl-partner') {
-      totOrders     += (r[1]||0);
-      totFwd        += (r[2]||0);
-      totRev        += (r[3]||0);
-      totTotal      += (r[4]||0);
-      // r[1] = totalOrders = fwdOrders + revOrders; r[8] = rtoOrders
-      // fwdOrders = totalOrders - rtoOrders - rvpOrders (approx via r[1]-r[8]-r[9])
-      // But cleaner: fwdCPO=r[6], fwdOrders = fwdCost/fwdCPO when fwdCPO>0
-      // Use rtoOrders directly from r[8]; derive fwdOrders from cost/CPO
-      const rowFwdOrders = r[6] > 0 ? (r[2] / r[6]) : 0;
-      const rowRtoOrders = r[8] || 0;
-      totFwdOrders  += rowFwdOrders;
-      totRtoOrders  += rowRtoOrders;
-      tr.innerHTML =
-        '<td>'+(isBest ? '🏆 ' : '')+r[0]+'</td>'+
-        '<td>'+fmtNum(r[1])+'</td>'+
-        '<td>'+fmtMoney(r[2])+'</td>'+
-        '<td>'+fmtMoney(r[3])+'</td>'+
-        '<td>'+fmtMoney(r[4])+'</td>'+
-        '<td style="color:var(--teal); font-weight:700;">'+(r[6]>0?fmtRate(r[6]):'—')+'</td>'+
-        '<td style="color:var(--coral); font-weight:700;">'+(r[7]>0?fmtRate(r[7]):'—')+'</td>'+
-        // FIX 1: CPOL shows '—' when 0 (e.g. Shadowfax-NDD has no forward orders)
-        '<td style="font-weight:700;">'+(r[5]>0?fmtRate(r[5]):'—')+'</td>';
-    } else {
-      totOrders += (r[1]||0); totFwd += (r[2]||0); totRev += (r[3]||0); totTotal += (r[4]||0);
-      tr.innerHTML =
-        '<td>'+r[0]+'</td>'+
-        '<td>'+fmtNum(r[1])+'</td>'+
-        '<td>'+fmtMoney(r[2])+'</td>'+
-        '<td>'+fmtMoney(r[3])+'</td>'+
-        '<td>'+fmtMoney(r[4])+'</td>'+
-        '<td>'+(r[5]>0?fmtRate(r[5]):'—')+'</td>';
-    }
+function renderPartnerTable(rows){
+  const tbody=document.querySelector('#tbl-partner tbody');
+  tbody.innerHTML='';
+  let rvpRow=null;
+  rows=(rows||[]).filter(r=>r[1]>0||r[2]>0||r[4]>0||(r[8]||0)>0||(r[9]||0)>0);
+  const rvpIdx=rows.findIndex(r=>r[0]==='RVP');
+  if(rvpIdx>=0){rvpRow=rows[rvpIdx];rows=rows.filter((_,i)=>i!==rvpIdx);}
+  if(!rows||!rows.length){tbody.innerHTML='<tr class="empty-row"><td colspan="8">No data for this filter selection</td></tr>';return;}
+  let totOrders=0,totFwd=0,totRev=0,totTotal=0,totFwdOrders=0,totRtoOrders=0;
+  rows.forEach((r,i)=>{
+    const tr=document.createElement('tr');
+    const isBest=i===0&&r[5]>0;
+    if(isBest){tr.style.background='var(--good-tint)';tr.style.borderLeft='3px solid var(--good)';}
+    totOrders+=(r[1]||0);totFwd+=(r[2]||0);totRev+=(r[3]||0);totTotal+=(r[4]||0);
+    const rowFwdOrders=r[6]>0?(r[2]/r[6]):0;
+    totFwdOrders+=rowFwdOrders;totRtoOrders+=(r[8]||0);
+    tr.innerHTML=
+      '<td>'+(isBest?'🏆 ':'')+r[0]+'</td>'+
+      '<td>'+fmtNum(r[1])+'</td>'+
+      '<td>'+fmtMoney(r[2])+'</td>'+
+      '<td>'+fmtMoney(r[3])+'</td>'+
+      '<td>'+fmtMoney(r[4])+'</td>'+
+      '<td style="color:var(--teal);font-weight:700;">'+(r[6]>0?fmtRate(r[6]):'—')+'</td>'+
+      '<td style="color:var(--coral);font-weight:700;">'+(r[7]>0?fmtRate(r[7]):'—')+'</td>'+
+      '<td style="font-weight:700;">'+(r[5]>0?fmtRate(r[5]):'—')+'</td>';
     tbody.appendChild(tr);
   });
-
-  // RVP row — shown at bottom, highlighted, EXCLUDED from Total
-  // Source: the RVP virtual partner extracted from the data rows above
-  if (tableId === 'tbl-partner' && rvpRow) {
-    const rvpCPO = (rvpRow[1]||0) > 0 ? ((rvpRow[4]||0) / (rvpRow[1]||0)) : 0;
-    const tr = document.createElement('tr');
-    tr.className = 'rvp-row';
-    tr.innerHTML =
+  if(rvpRow){
+    const rvpCPO=(rvpRow[1]||0)>0?((rvpRow[4]||0)/(rvpRow[1]||0)):0;
+    const tr=document.createElement('tr');tr.className='rvp-row';
+    tr.innerHTML=
       '<td style="font-weight:700;">⬡ RVP <span style="font-size:10px;padding:2px 6px;background:var(--coral);color:#fff;border-radius:99px;margin-left:4px;vertical-align:middle;">Separate</span></td>'+
-      '<td>'+fmtNum(rvpRow[1]||0)+'</td>'+
-      '<td>—</td>'+
+      '<td>'+fmtNum(rvpRow[1]||0)+'</td><td>—</td>'+
       '<td>'+fmtMoney(rvpRow[4]||0)+'</td>'+
-      '<td>'+fmtMoney(rvpRow[4]||0)+'</td>'+
-      '<td>—</td>'+
-      '<td style="color:var(--coral); font-weight:700;">'+fmtRate(rvpCPO)+'</td>'+
-      '<td style="color:var(--muted); font-style:italic; font-size:11px;">Excl. from CPOL</td>';
+      '<td>'+fmtMoney(rvpRow[4]||0)+'</td><td>—</td>'+
+      '<td style="color:var(--coral);font-weight:700;">'+fmtRate(rvpCPO)+'</td>'+
+      '<td style="color:var(--muted);font-style:italic;font-size:11px;">Excl. from CPOL</td>';
     tbody.appendChild(tr);
   }
-
-  // Total / Net row at the bottom
-  if (showTotalRow) {
-    const tr = document.createElement('tr');
-    tr.className = 'total-row';
-    if (tableId === 'tbl-partner') {
-      // FIX 2: Weighted average CPOs for total row
-      // Fwd CPO  = total forward cost / total forward orders
-      // Rev CPO  = total reverse cost (RTO) / total RTO orders
-      // CPOL     = total cost (fwd+RTO) / (total fwd orders - total RTO orders)
-      const totFwdCPO  = totFwdOrders > 0 ? totFwd / totFwdOrders : 0;
-      const totRevCPO  = totRtoOrders > 0 ? totRev / totRtoOrders : 0;
-      const totNetOrd  = totFwdOrders - totRtoOrders;
-      const totCPOL    = totNetOrd   > 0 ? (totFwd + totRev) / totNetOrd : 0;
-      tr.innerHTML =
-        '<td>⚡ Total</td>'+
-        '<td>'+fmtNum(totOrders)+'</td>'+
-        '<td>'+fmtMoney(totFwd)+'</td>'+
-        '<td>'+fmtMoney(totRev)+'</td>'+
-        '<td>'+fmtMoney(totTotal)+'</td>'+
-        '<td style="color:var(--teal);font-weight:800;">'+(totFwdCPO>0?fmtRate(totFwdCPO):'—')+'</td>'+
-        '<td style="color:var(--coral);font-weight:800;">'+(totRevCPO>0?fmtRate(totRevCPO):'—')+'</td>'+
-        '<td style="font-weight:900;">'+(totCPOL>0?fmtRate(totCPOL):'—')+'</td>';
-    } else {
-      tr.innerHTML =
-        '<td>⚡ Total</td>'+
-        '<td>'+fmtNum(totOrders)+'</td>'+
-        '<td>'+fmtMoney(totFwd)+'</td>'+
-        '<td>'+fmtMoney(totRev)+'</td>'+
-        '<td>'+fmtMoney(totTotal)+'</td>'+
-        '<td>—</td>';
-    }
-    tbody.appendChild(tr);
-  }
+  const tr=document.createElement('tr');tr.className='total-row';
+  const tFwdCPO=totFwdOrders>0?totFwd/totFwdOrders:0;
+  const tRevCPO=totRtoOrders>0?totRev/totRtoOrders:0;
+  const tNetOrd=totFwdOrders-totRtoOrders;
+  const tCPOL=tNetOrd>0?(totFwd+totRev)/tNetOrd:0;
+  tr.innerHTML=
+    '<td>⚡ Total</td>'+
+    '<td>'+fmtNum(totOrders)+'</td>'+
+    '<td>'+fmtMoney(totFwd)+'</td>'+
+    '<td>'+fmtMoney(totRev)+'</td>'+
+    '<td>'+fmtMoney(totTotal)+'</td>'+
+    '<td style="color:var(--teal);font-weight:800;">'+(tFwdCPO>0?fmtRate(tFwdCPO):'—')+'</td>'+
+    '<td style="color:var(--coral);font-weight:800;">'+(tRevCPO>0?fmtRate(tRevCPO):'—')+'</td>'+
+    '<td style="font-weight:900;">'+(tCPOL>0?fmtRate(tCPOL):'—')+'</td>';
+  tbody.appendChild(tr);
 }
 
-function renderMatrix(partnerXZone){
-  const thead = document.querySelector('#tbl-matrix thead');
-  const tbody = document.querySelector('#tbl-matrix tbody');
-  thead.innerHTML = ''; tbody.innerHTML = '';
-  const header = (partnerXZone && partnerXZone.header) || [];
-  const rows = (partnerXZone && partnerXZone.rows) || [];
-  if (!header.length){ tbody.innerHTML = '<tr class="empty-row"><td>No data</td></tr>'; return; }
-  const trh = document.createElement('tr');
-  header.forEach(h => trh.innerHTML += '<th>'+h+'</th>');
-  thead.appendChild(trh);
-  if (!rows.length){ tbody.innerHTML = '<tr class="empty-row"><td colspan="'+header.length+'">No data</td></tr>'; return; }
-
-  // Totals per zone column
-  const zoneTotals = new Array(header.length).fill(0);
-
-  rows.forEach(r => {
-    const tr = document.createElement('tr');
-    r.forEach((v, i) => {
-      tr.innerHTML += '<td>'+(i === 0 ? v : fmtMoney(v))+'</td>';
-      if (i > 0 && isFinite(v)) zoneTotals[i] += v;
-    });
-    tbody.appendChild(tr);
-  });
-
-  // Total row
-  const totTr = document.createElement('tr');
-  totTr.className = 'total-row';
-  header.forEach((h, i) => {
-    totTr.innerHTML += '<td>'+(i===0 ? '⚡ Total' : fmtMoney(zoneTotals[i]))+'</td>';
-  });
-  tbody.appendChild(totTr);
-}
-
-/* Trend charts */
-function renderTrendChart(canvasId, trend, valueIndex, color, fmt){
-  const canvas = document.getElementById(canvasId);
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height, PAD = 40;
+function renderTrendChart(canvasId,trend,valueIndex,color,fmt){
+  const canvas=document.getElementById(canvasId);
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height,PAD=40;
   ctx.clearRect(0,0,W,H);
-  // Filter out null values
-  const validTrend = (trend || []).filter(r => r[valueIndex] != null && isFinite(r[valueIndex]));
-  if (!validTrend.length){
-    ctx.fillStyle = '#68728a'; ctx.font = '13px sans-serif';
-    ctx.fillText('No cost data available — check Rate Card for weight bucket matches', PAD, H/2);
-    return;
-  }
-  const vals = validTrend.map(r => r[valueIndex]);
-  const maxVal = Math.max.apply(null, vals) || 1;
-  ctx.strokeStyle = '#dde3ee'; ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(PAD, H-PAD); ctx.lineTo(W-10, H-PAD); ctx.moveTo(PAD, 10); ctx.lineTo(PAD, H-PAD); ctx.stroke();
-  const stepX = (W - PAD - 20) / Math.max(validTrend.length - 1, 1);
-  const scaleY = (H - PAD - 20) / (maxVal || 1);
-  ctx.strokeStyle = color; ctx.lineWidth = 2;
-  ctx.beginPath();
-  validTrend.forEach((r, i) => {
-    const x = PAD + i * stepX, y = (H - PAD) - r[valueIndex] * scaleY;
-    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-  });
+  const valid=(trend||[]).filter(r=>r[valueIndex]!=null&&isFinite(r[valueIndex]));
+  if(!valid.length){ctx.fillStyle='#68728a';ctx.font='13px sans-serif';ctx.fillText('No data',PAD,H/2);return;}
+  const vals=valid.map(r=>r[valueIndex]);
+  const maxVal=Math.max.apply(null,vals)||1;
+  ctx.strokeStyle='#dde3ee';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(PAD,H-PAD);ctx.lineTo(W-10,H-PAD);ctx.moveTo(PAD,10);ctx.lineTo(PAD,H-PAD);ctx.stroke();
+  const stepX=(W-PAD-20)/Math.max(valid.length-1,1);
+  const scaleY=(H-PAD-20)/(maxVal||1);
+  ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();
+  valid.forEach((r,i)=>{const x=PAD+i*stepX,y=(H-PAD)-r[valueIndex]*scaleY;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});
   ctx.stroke();
-  ctx.lineTo(PAD + (validTrend.length-1)*stepX, H-PAD); ctx.lineTo(PAD, H-PAD); ctx.closePath();
-  const areaGrad = ctx.createLinearGradient(0, 10, 0, H-PAD);
-  areaGrad.addColorStop(0, color + '38'); areaGrad.addColorStop(1, color + '05');
-  ctx.fillStyle = areaGrad; ctx.fill();
-  ctx.fillStyle = '#68728a'; ctx.font = '11px sans-serif';
-  ctx.fillText(fmt(maxVal), 4, 16); ctx.fillText(fmt(0), 4, H-PAD+4);
-  const labelIdx = [0, Math.floor(validTrend.length/2), validTrend.length-1];
-  labelIdx.forEach(i => {
-    if (validTrend[i]) { const x = PAD + i * stepX; ctx.fillText(validTrend[i][0], Math.max(x-25,PAD), H-PAD+18); }
+  ctx.lineTo(PAD+(valid.length-1)*stepX,H-PAD);ctx.lineTo(PAD,H-PAD);ctx.closePath();
+  const ag=ctx.createLinearGradient(0,10,0,H-PAD);ag.addColorStop(0,color+'38');ag.addColorStop(1,color+'05');
+  ctx.fillStyle=ag;ctx.fill();
+  ctx.fillStyle='#68728a';ctx.font='11px sans-serif';
+  ctx.fillText(fmt(maxVal),4,16);ctx.fillText(fmt(0),4,H-PAD+4);
+  [0,Math.floor(valid.length/2),valid.length-1].forEach(i=>{if(valid[i]){const x=PAD+i*stepX;ctx.fillText(valid[i][0],Math.max(x-25,PAD),H-PAD+18);}});
+}
+
+function drawBarChart(canvasId,items,fmt,colorFn){
+  const canvas=document.getElementById(canvasId);
+  const rowH=34;const H=Math.max(items.length*rowH+20,60);
+  canvas.height=H;canvas.width=canvas.clientWidth||500;
+  const ctx=canvas.getContext('2d');const W=canvas.width;
+  ctx.clearRect(0,0,W,H);
+  if(!items||!items.length){ctx.fillStyle='#68728a';ctx.font='13px sans-serif';ctx.fillText('No data',10,H/2);return;}
+  const labelW=140,valueW=90,barAreaW=Math.max(W-labelW-valueW-10,40);
+  const maxVal=Math.max.apply(null,items.map(i=>i[1]))||1;
+  ctx.font='12px sans-serif';
+  items.forEach((item,i)=>{
+    const y=i*rowH+10,barW=Math.max((item[1]/maxVal)*barAreaW,2);
+    const color=colorFn?colorFn(item,i):BAR_COLORS[i%BAR_COLORS.length];
+    ctx.fillStyle='#1a2233';ctx.textAlign='left';
+    ctx.fillText(item[0].length>20?item[0].slice(0,18)+'…':item[0],0,y+16);
+    const grad=ctx.createLinearGradient(labelW,0,labelW+barW,0);
+    grad.addColorStop(0,hexToRgba(color,0.75));grad.addColorStop(1,color);
+    ctx.fillStyle=grad;
+    const r=Math.min(4,8/2,barW/2>0?barW/2:4);
+    ctx.beginPath();ctx.moveTo(labelW+r,y+4);ctx.arcTo(labelW+barW,y+4,labelW+barW,y+4+16,r);ctx.arcTo(labelW+barW,y+4+16,labelW,y+4+16,r);ctx.arcTo(labelW,y+4+16,labelW,y+4,r);ctx.arcTo(labelW,y+4,labelW+barW,y+4,r);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#68728a';ctx.textAlign='left';ctx.fillText(fmt(item[1]),labelW+barAreaW+8,y+16);
   });
 }
 
-/* Bar charts */
-function drawBarChart(canvasId, items, fmt, colorFn){
-  const canvas = document.getElementById(canvasId);
-  const rowH = 34;
-  const H = Math.max(items.length * rowH + 20, 60);
-  canvas.height = H; canvas.width = canvas.clientWidth || 500;
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width;
-  ctx.clearRect(0,0,W,H);
-  if (!items || !items.length){ ctx.fillStyle='#68728a'; ctx.font='13px sans-serif'; ctx.fillText('No data', 10, H/2); return; }
-  const labelW=140, valueW=90, barAreaW=Math.max(W-labelW-valueW-10,40);
-  const maxVal = Math.max.apply(null, items.map(i => i[1])) || 1;
-  ctx.font = '12px sans-serif';
-  items.forEach((item, i) => {
-    const y = i * rowH + 10, barW = Math.max((item[1]/maxVal)*barAreaW, 2);
-    const color = colorFn ? colorFn(item, i) : BAR_COLORS[i % BAR_COLORS.length];
-    ctx.fillStyle = '#1a2233'; ctx.textAlign = 'left';
-    ctx.fillText(item[0].length > 20 ? item[0].slice(0,18)+'…' : item[0], 0, y+16);
-    const grad = ctx.createLinearGradient(labelW,0,labelW+barW,0);
-    grad.addColorStop(0, hexToRgba(color,0.75)); grad.addColorStop(1, color);
-    ctx.fillStyle = grad; roundRect(ctx,labelW,y+4,barW,16,4); ctx.fill();
-    ctx.fillStyle='#68728a'; ctx.textAlign='left'; ctx.fillText(fmt(item[1]), labelW+barAreaW+8, y+16);
-  });
+function renderCpolBar(byPartner){
+  const items=(byPartner||[]).filter(r=>r[5]>0&&isFinite(r[5])&&r[0]!=='RVP').map(r=>[r[0],r[5]]);
+  drawBarChart('chart-partner-cpol',items,fmtRate,(item,i)=>i===0?'#33c07a':BAR_COLORS[i%BAR_COLORS.length]);
 }
 
-function roundRect(ctx,x,y,w,h,r){
-  r=Math.min(r,h/2,w/2>0?w/2:r);
-  ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
-}
-
-function renderPartnerCpolComparison(byPartner){
-  const items = (byPartner||[]).filter(r => r[5] > 0 && isFinite(r[5])).map(r => [r[0], r[5]]);
-  drawBarChart('chart-partner-cpol', items, fmtRate, (item,i) => i===0?'#33c07a':BAR_COLORS[i%BAR_COLORS.length]);
-}
-
-function drawPieChart(canvasId, items, legendId, tooltipId){
-  const canvas=document.getElementById(canvasId), ctx=canvas.getContext('2d');
-  const W=canvas.width, H=canvas.height;
-  ctx.clearRect(0,0,W,H);
-  const legend=document.getElementById(legendId); legend.innerHTML='';
+function drawPieChart(canvasId,items,legendId,tooltipId){
+  const canvas=document.getElementById(canvasId),ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height;ctx.clearRect(0,0,W,H);
+  const legend=document.getElementById(legendId);legend.innerHTML='';
   const tooltip=tooltipId?document.getElementById(tooltipId):null;
-  if(!items||!items.length){
-    ctx.fillStyle='#68728a'; ctx.font='13px sans-serif'; ctx.fillText('No data',10,H/2);
-    if(tooltip){canvas.onmousemove=null;canvas.onmouseleave=null;} return;
-  }
+  if(!items||!items.length){ctx.fillStyle='#68728a';ctx.font='13px sans-serif';ctx.fillText('No data',10,H/2);return;}
   const total=items.reduce((s,i)=>s+i[1],0)||1;
   const cx=W/2,cy=H/2,r=Math.min(W,H)/2-10;
-  let cursor=0; const slices=[];
+  let cursor=0;const slices=[];
   items.forEach((item,i)=>{
-    const sliceAngle=(item[1]/total)*Math.PI*2, dataStart=cursor, dataEnd=cursor+sliceAngle;
+    const sliceAngle=(item[1]/total)*Math.PI*2,dataStart=cursor,dataEnd=cursor+sliceAngle;
     const color=BAR_COLORS[i%BAR_COLORS.length];
-    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,dataStart-Math.PI/2,dataEnd-Math.PI/2); ctx.closePath(); ctx.fillStyle=color; ctx.fill();
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,dataStart-Math.PI/2,dataEnd-Math.PI/2);ctx.closePath();ctx.fillStyle=color;ctx.fill();
     const pct=((item[1]/total)*100).toFixed(1);
     slices.push({label:item[0],value:item[1],pct,dataStart,dataEnd,color});
-    const li=document.createElement('div'); li.style.cssText='display:flex;align-items:center;gap:6px;';
+    const li=document.createElement('div');li.style.cssText='display:flex;align-items:center;gap:6px;';
     li.innerHTML='<span style="width:10px;height:10px;border-radius:2px;background:'+color+';display:inline-block;"></span>'+item[0]+' — '+pct+'%';
-    legend.appendChild(li); cursor=dataEnd;
+    legend.appendChild(li);cursor=dataEnd;
   });
-  if(!tooltip) return;
+  if(!tooltip)return;
   canvas.onmousemove=function(e){
-    const rect=canvas.getBoundingClientRect(), scaleX=canvas.width/rect.width, scaleY=canvas.height/rect.height;
-    const mx=(e.clientX-rect.left)*scaleX, my=(e.clientY-rect.top)*scaleY;
-    const dx=mx-cx, dy=my-cy, dist=Math.sqrt(dx*dx+dy*dy);
+    const rect=canvas.getBoundingClientRect(),scaleX=canvas.width/rect.width,scaleY=canvas.height/rect.height;
+    const mx=(e.clientX-rect.left)*scaleX,my=(e.clientY-rect.top)*scaleY;
+    const dx=mx-cx,dy=my-cy,dist=Math.sqrt(dx*dx+dy*dy);
     if(dist>r){tooltip.style.display='none';canvas.style.cursor='default';return;}
-    let shifted=Math.atan2(dy,dx)+Math.PI/2; if(shifted<0)shifted+=Math.PI*2;
-    const hit=slices.find(s=>shifted>=s.dataStart&&shifted<s.dataEnd);
+    let s=Math.atan2(dy,dx)+Math.PI/2;if(s<0)s+=Math.PI*2;
+    const hit=slices.find(sl=>s>=sl.dataStart&&s<sl.dataEnd);
     if(!hit){tooltip.style.display='none';return;}
-    canvas.style.cursor='pointer'; tooltip.style.display='block';
-    tooltip.innerHTML='<strong>'+hit.label+'</strong><br>'+fmtMoney(hit.value)+' &middot; '+hit.pct+'%';
-    const panelRect=canvas.closest('.panel').getBoundingClientRect();
-    tooltip.style.left=(e.clientX-panelRect.left+14)+'px'; tooltip.style.top=(e.clientY-panelRect.top+14)+'px';
+    canvas.style.cursor='pointer';tooltip.style.display='block';
+    tooltip.innerHTML='<strong>'+hit.label+'</strong><br>'+fmtMoney(hit.value)+' · '+hit.pct+'%';
+    const pr=canvas.closest('.panel').getBoundingClientRect();
+    tooltip.style.left=(e.clientX-pr.left+14)+'px';tooltip.style.top=(e.clientY-pr.top+14)+'px';
   };
   canvas.onmouseleave=function(){tooltip.style.display='none';canvas.style.cursor='default';};
 }
 
-function renderPartnerPieChart(byPartner){
-  const items=(byPartner||[]).map(r=>[r[0],r[4]]).filter(r=>r[1]>0&&isFinite(r[1])).sort((a,b)=>b[1]-a[1]);
+function renderPieChart(byPartner){
+  const items=(byPartner||[]).filter(r=>r[0]!=='RVP').map(r=>[r[0],r[4]]).filter(r=>r[1]>0&&isFinite(r[1])).sort((a,b)=>b[1]-a[1]);
   drawPieChart('chart-partner-pie',items,'pie-legend','pie-tooltip');
 }
 
-/* ============================================================
-   COST SIMULATOR — allocation-based
-   Screen: Target CPOL + Total Volume + partner table only.
-   Historical RTO % remains backend-only.
-   ============================================================ */
-let lastDashboardData = null; // FIX: declared at module scope (was implicit global)
-let allocTargetCPO = null;
-let allocTotalVolume = 0;
-let allocRows = {};
-let allocInitialised = false;
-let allocSelected = new Set();
-let allocValues = {};
-let lastAllocData = null;
+// ============================================================
+// ALLOCATION SIMULATOR
+// ============================================================
+let lastDashboardData=null;
+let allocTargetCPO=null;
+let allocTotalVolume=0;
+let allocRows={};
+let allocInitialised=false;
+let allocSelected=new Set();
+let allocValues={};
+let lastAllocData=null;
+let allocSimTimer=null;
 
 function snapshotAllocValues(){
-  document.querySelectorAll('.alloc-vol-pct').forEach(input=>{
-    allocValues[input.dataset.partner]=Number(input.value)||0;
-  });
+  document.querySelectorAll('.alloc-vol-pct').forEach(inp=>{allocValues[inp.dataset.partner]=Number(inp.value)||0;});
 }
 
 function renderAllocPartnerDropdown(rows){
@@ -818,281 +596,171 @@ function renderAllocPartnerDropdown(rows){
     row.style.cssText='display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;cursor:pointer;font-size:13px;';
     row.addEventListener('mouseenter',()=>row.style.background='var(--panel-2)');
     row.addEventListener('mouseleave',()=>row.style.background='transparent');
-    const cb=document.createElement('input');
-    cb.type='checkbox';
-    cb.checked=allocSelected.has(p);
+    const cb=document.createElement('input');cb.type='checkbox';cb.checked=allocSelected.has(p);
     cb.addEventListener('change',()=>{
       snapshotAllocValues();
-      if(cb.checked) allocSelected.add(p);
-      else {
-        allocSelected.delete(p);
-        delete allocValues[p]; // clear removed partner's allocation
-      }
-      // Normalize remaining allocations to sum to 100%
+      if(cb.checked)allocSelected.add(p);else{allocSelected.delete(p);delete allocValues[p];}
       redistributeAllocToHundred();
       renderAllocTable(lastAllocData);
-      if(allocTotalVolume>0) runAllocationSimulation();
+      if(allocTotalVolume>0)runAllocationSimulation();
     });
-    const span=document.createElement('span');
-    span.textContent=p;
-    row.appendChild(cb); row.appendChild(span); panel.appendChild(row);
+    const span=document.createElement('span');span.textContent=p;
+    row.appendChild(cb);row.appendChild(span);panel.appendChild(row);
   });
-  label.textContent=allocSelected.size
-    ? allocSelected.size+' partner'+(allocSelected.size>1?'s':'')+' selected'
-    : 'Select partners…';
+  label.textContent=allocSelected.size?allocSelected.size+' partner'+(allocSelected.size>1?'s':'')+' selected':'Select partners…';
 }
 
 document.getElementById('alloc-partner-dd-btn').addEventListener('click',e=>{
   e.stopPropagation();
-  const panel=document.getElementById('alloc-partner-dd-panel');
-  panel.style.display=panel.style.display==='none'?'block':'none';
+  const p=document.getElementById('alloc-partner-dd-panel');
+  p.style.display=p.style.display==='none'?'block':'none';
 });
 document.addEventListener('click',e=>{
-  const panel=document.getElementById('alloc-partner-dd-panel');
-  const btn=document.getElementById('alloc-partner-dd-btn');
-  if(panel && panel.style.display==='block' && !panel.contains(e.target) && e.target!==btn) panel.style.display='none';
+  const p=document.getElementById('alloc-partner-dd-panel');
+  const b=document.getElementById('alloc-partner-dd-btn');
+  if(p&&p.style.display==='block'&&!p.contains(e.target)&&e.target!==b)p.style.display='none';
 });
 
 function renderAllocTable(data){
   const tbody=document.querySelector('#tbl-alloc tbody');
-  if(!tbody) return;
-  lastAllocData=data;
-  tbody.innerHTML='';
-
-  const rows=(data && data.rows) || [];
-  if(!rows.length){
-    tbody.innerHTML='<tr class="empty-row"><td colspan="7">Enter Total Volume to begin</td></tr>';
-    updateAllocSummary(null);
-    renderAllocPartnerDropdown([]);
-    return;
-  }
-
-  // Keep the partner selector populated from the backend partner list.
+  if(!tbody)return;
+  lastAllocData=data;tbody.innerHTML='';
+  const rows=(data&&data.rows)||[];
+  if(!rows.length){tbody.innerHTML='<tr class="empty-row"><td colspan="8">Enter Total Volume to begin</td></tr>';updateAllocSummary(null);renderAllocPartnerDropdown([]);return;}
   renderAllocPartnerDropdown(rows);
-
   const visibleRows=rows.filter(r=>allocSelected.has(r.partner));
-  if(!visibleRows.length){
-    tbody.innerHTML='<tr class="empty-row"><td colspan="7">Select one or more delivery partners above</td></tr>';
-    updateAllocSummary(data);
-    return;
-  }
-
+  if(!visibleRows.length){tbody.innerHTML='<tr class="empty-row"><td colspan="8">Select one or more delivery partners above</td></tr>';updateAllocSummary(data);return;}
   visibleRows.forEach((r,i)=>{
     allocRows[r.partner]=r;
-    // Input value: use what user typed (allocValues), or 0 if nothing entered yet
-    const value = Object.prototype.hasOwnProperty.call(allocValues, r.partner)
-      ? allocValues[r.partner]
-      : 0; // FIX: never seed from historical — start at 0
+    const value=Object.prototype.hasOwnProperty.call(allocValues,r.partner)?allocValues[r.partner]:0;
     const tr=document.createElement('tr');
     tr.style.background=i%2===1?'var(--panel-2)':'transparent';
-
-    // Ideal volume: null from backend when totalVolume=0 → show —
-    const idealVol = r.idealVolume != null ? r.idealVolume : null;
-    const idealPct = r.idealPct   != null ? r.idealPct   : null;
-    const hasIdeal = idealVol != null && idealPct != null;
-
-    // Input volume derived from user's typed value
-    const volAmt   = allocTotalVolume > 0 ? round2(allocTotalVolume * value / 100) : 0;
-    const volPctVal= value > 0 ? Number(value).toFixed(2) : '0.00';
-
-    const inputMode   = (document.getElementById('alloc-input-mode')||{}).value || 'volume';
-    const volEditable = inputMode === 'volume';
-
+    const idealVol=r.idealVolume!=null?r.idealVolume:null;
+    const idealPct=r.idealPct!=null?r.idealPct:null;
+    const hasIdeal=idealVol!=null&&idealPct!=null;
+    const volAmt=allocTotalVolume>0?round2(allocTotalVolume*value/100):0;
+    const volPctVal=value>0?Number(value).toFixed(2):'0.00';
+    const inputMode=(document.getElementById('alloc-input-mode')||{}).value||'volume';
+    const volEditable=inputMode==='volume';
     tr.innerHTML=
       '<td style="font-weight:700;">'+r.partner+'</td>'+
       '<td style="color:var(--muted);">'+Number(r.previousAllocationPct||0).toFixed(2)+'%</td>'+
-      // Ideal Volume (Ideal%) — shows — until Total Volume is entered
-      '<td style="color:var(--accent-2);font-weight:700;">'+
-        (hasIdeal
-          ? fmtNum(idealVol)+' <span style="font-size:11px;color:var(--muted);">('+idealPct.toFixed(2)+'%)</span>'
-          : '<span style="color:var(--muted);">—</span>')+'</td>'+
-      // Volume input
-      '<td>'+(volEditable
-        ? '<input class="alloc-vol-abs" data-partner="'+r.partner.replace(/"/g,'&quot;')+
-          '" type="number" min="0" step="1" value="'+(volAmt > 0 ? Math.round(volAmt) : '')+
-          '" placeholder="0" style="width:90px;text-align:right;">'
-        : '<span class="alloc-vol-abs-disp" style="color:var(--muted);font-size:12px;">'+
-          (volAmt > 0 ? fmtNum(Math.round(volAmt)) : '—')+'</span>')+'</td>'+
-      // Vol % — editable in pct mode, display in volume mode; shows — until something typed
-      '<td>'+(volEditable
-        ? '<span class="alloc-vol-pct-display" style="color:var(--muted);font-size:12px;">'+
-          (value > 0 ? volPctVal+'%' : '—')+'</span>'
-        : '<input class="alloc-vol-pct" data-partner="'+r.partner.replace(/"/g,'&quot;')+
-          '" type="number" min="0" max="100" step="0.01" value="'+(value > 0 ? volPctVal : '')+
-          '" placeholder="0" style="width:75px;text-align:right;">')+'</td>'+
-      // Applicable CPOL — shows — until inVol > 0
-      '<td style="font-weight:800;color:var(--accent-2);">'+
-        (r.applicableCpol != null ? fmtRate(r.applicableCpol) : '<span style="color:var(--muted);">—</span>')+'</td>'+
-      // Historical CPOL — always visible (read-only)
-      '<td style="color:var(--muted);">'+(Number(r.historicalCpol)>0 ? fmtRate(r.historicalCpol) : '—')+'</td>'+
-      // Ideal CPOL — shows — until Total Volume entered
-      '<td style="font-weight:700;color:var(--teal);">'+
-        (r.idealCpol != null ? fmtRate(r.idealCpol) : '<span style="color:var(--muted);">—</span>')+'</td>';
+      '<td style="color:var(--accent-2);font-weight:700;">'+(hasIdeal?fmtNum(idealVol)+' <span style="font-size:11px;color:var(--muted);">('+idealPct.toFixed(2)+'%)</span>':'<span style="color:var(--muted);">—</span>')+'</td>'+
+      '<td>'+(volEditable?'<input class="alloc-vol-abs" data-partner="'+r.partner.replace(/"/g,'&quot;')+'" type="number" min="0" step="1" value="'+(volAmt>0?Math.round(volAmt):'')+'" placeholder="0" style="width:90px;text-align:right;">'
+        :'<span class="alloc-vol-abs-disp" style="color:var(--muted);font-size:12px;">'+(volAmt>0?fmtNum(Math.round(volAmt)):'—')+'</span>')+'</td>'+
+      '<td>'+(volEditable?'<span class="alloc-vol-pct-display" style="color:var(--muted);font-size:12px;">'+(value>0?volPctVal+'%':'—')+'</span>'
+        :'<input class="alloc-vol-pct" data-partner="'+r.partner.replace(/"/g,'&quot;')+'" type="number" min="0" max="100" step="0.01" value="'+(value>0?volPctVal:'')+'" placeholder="0" style="width:75px;text-align:right;">')+'</td>'+
+      '<td style="font-weight:800;color:var(--accent-2);">'+(r.applicableCpol!=null?fmtRate(r.applicableCpol):'<span style="color:var(--muted);">—</span>')+'</td>'+
+      '<td style="color:var(--muted);">'+(Number(r.historicalCpol)>0?fmtRate(r.historicalCpol):'—')+'</td>'+
+      '<td style="font-weight:700;color:var(--teal);">'+(r.idealCpol!=null?fmtRate(r.idealCpol):'<span style="color:var(--muted);">—</span>')+'</td>';
     tbody.appendChild(tr);
   });
-
-  // Volume mode: volume input → compute % + update display
-  tbody.querySelectorAll('.alloc-vol-abs').forEach(input=>{
-    input.addEventListener('input',()=>{
-      let vol=Math.max(0,Number(input.value)||0);
+  tbody.querySelectorAll('.alloc-vol-abs').forEach(inp=>{
+    inp.addEventListener('input',()=>{
+      const vol=Math.max(0,Number(inp.value)||0);
       const totalVol=allocTotalVolume||0;
       const pct=totalVol>0?Math.min(100,round2(vol/totalVol*100)):0;
-      allocValues[input.dataset.partner]=pct;
-      const row=input.closest('tr');
-      if(row){
-        const pctCell=row.querySelector('.alloc-vol-pct-display');
-        if(pctCell) pctCell.textContent=pct.toFixed(2)+'%';
-      }
-      updateAllocTotalBar();
-      runAllocationSimulation();
+      allocValues[inp.dataset.partner]=pct;
+      const row=inp.closest('tr');
+      if(row){const pd=row.querySelector('.alloc-vol-pct-display');if(pd)pd.textContent=pct.toFixed(2)+'%';}
+      updateAllocTotalBar();runAllocationSimulation();
     });
   });
-
-  // Pct mode: pct input → compute volume + update display
-  tbody.querySelectorAll('.alloc-vol-pct').forEach(input=>{
-    input.addEventListener('input',()=>{
-      let pct=Math.max(0,Math.min(100,Number(input.value)||0));
-      allocValues[input.dataset.partner]=pct;
+  tbody.querySelectorAll('.alloc-vol-pct').forEach(inp=>{
+    inp.addEventListener('input',()=>{
+      const pct=Math.max(0,Math.min(100,Number(inp.value)||0));
+      allocValues[inp.dataset.partner]=pct;
       const totalVol=allocTotalVolume||0;
-      const row=input.closest('tr');
-      if(row){
-        const volDisp=row.querySelector('.alloc-vol-abs-disp');
-        if(volDisp) volDisp.textContent=fmtNum(Math.round(totalVol*pct/100));
-      }
-      updateAllocTotalBar();
-      runAllocationSimulation();
+      const row=inp.closest('tr');
+      if(row){const vd=row.querySelector('.alloc-vol-abs-disp');if(vd)vd.textContent=fmtNum(Math.round(totalVol*pct/100));}
+      updateAllocTotalBar();runAllocationSimulation();
     });
   });
-  updateAllocSummary(data);
-  updateAllocTotalBar();
+  updateAllocSummary(data);updateAllocTotalBar();
 }
 
 function updateAllocSummary(data){
-  const costEl      = document.getElementById('alloc-projected-cost');
-  const cpolEl      = document.getElementById('alloc-net-cpol');
-  const idealCpolEl = document.getElementById('alloc-ideal-net-cpol');
-  if(!costEl||!cpolEl) return;
-  costEl.textContent      = data&&isFinite(data.projectedCost)  ? fmtMoney(data.projectedCost)  : '—';
-  cpolEl.textContent      = data&&isFinite(data.netCPOL)        ? fmtRate(data.netCPOL)          : '—';
-  if(idealCpolEl) idealCpolEl.textContent = data&&isFinite(data.idealNetCPOL) ? fmtRate(data.idealNetCPOL) : '—';
-
-  const warning = document.getElementById('alloc-validation-warning');
-  warning.style.background  = '';
-  warning.style.borderColor = '';
-  warning.style.color       = '';
-
-  if(data && data.allocationValid === false){
-    warning.style.display = 'block';
-    warning.textContent = '⚠ Input allocation must total 100%. Current total: '+Number(data.inputAllocationPct||0).toFixed(2)+'%';
+  const costEl=document.getElementById('alloc-projected-cost');
+  const cpolEl=document.getElementById('alloc-net-cpol');
+  const idealCpolEl=document.getElementById('alloc-ideal-net-cpol');
+  if(!costEl||!cpolEl)return;
+  costEl.textContent=data&&isFinite(data.projectedCost)?fmtMoney(data.projectedCost):'—';
+  cpolEl.textContent=data&&isFinite(data.netCPOL)?fmtRate(data.netCPOL):'—';
+  if(idealCpolEl)idealCpolEl.textContent=data&&isFinite(data.idealNetCPOL)?fmtRate(data.idealNetCPOL):'—';
+  const warning=document.getElementById('alloc-validation-warning');
+  warning.style.cssText='';
+  if(data&&data.allocationValid===false){
+    warning.style.display='block';
+    warning.textContent='⚠ Input allocation must total 100%. Current total: '+Number(data.inputAllocationPct||0).toFixed(2)+'%';
     return;
   }
-
-  // Target CPOL is a display-only benchmark — compare against Ideal Net CPOL (always cheapest achievable)
-  const targetInput = document.getElementById('alloc-target-cpo');
-  const targetVal   = targetInput && targetInput.value !== '' ? Number(targetInput.value) : null;
-
-  if(targetVal != null && data && data.idealNetCPOL != null && isFinite(data.idealNetCPOL)){
-    const diff = round2(data.idealNetCPOL - targetVal);
-    if(diff <= 0){
-      warning.style.display     = 'block';
-      warning.style.background  = 'var(--good-tint)';
-      warning.style.borderColor = 'var(--good)';
-      warning.style.color       = 'var(--good)';
-      warning.textContent = '✓ Best achievable Ideal Net CPOL ('+fmtRate(data.idealNetCPOL)+') is at or below your target ('+fmtRate(targetVal)+'). Cheapest allocation beats target by ₹'+Math.abs(diff)+'.';
+  const targetInput=document.getElementById('alloc-target-cpo');
+  const targetVal=targetInput&&targetInput.value!==''?Number(targetInput.value):null;
+  if(targetVal!=null&&data&&data.idealNetCPOL!=null&&isFinite(data.idealNetCPOL)){
+    const diff=round2(data.idealNetCPOL-targetVal);
+    if(diff<=0){
+      warning.style.display='block';warning.style.background='var(--good-tint)';warning.style.border='1px solid var(--good)';warning.style.color='var(--good)';warning.style.padding='12px 16px';warning.style.borderRadius='var(--radius-sm)';warning.style.fontSize='12px';
+      warning.textContent='✓ Best achievable CPOL ('+fmtRate(data.idealNetCPOL)+') is at or below target ('+fmtRate(targetVal)+'). Beats target by ₹'+Math.abs(diff)+'.';
     } else {
-      warning.style.display     = 'block';
-      warning.style.background  = 'var(--warn-tint)';
-      warning.style.borderColor = 'var(--warn)';
-      warning.style.color       = 'var(--warn)';
-      warning.textContent = '⚠ Best achievable Ideal Net CPOL ('+fmtRate(data.idealNetCPOL)+') is ₹'+diff+' above your target ('+fmtRate(targetVal)+'). Try removing expensive partners or adjusting target.';
+      warning.style.display='block';warning.style.background='var(--warn-tint)';warning.style.border='1px solid var(--warn)';warning.style.color='var(--warn)';warning.style.padding='12px 16px';warning.style.borderRadius='var(--radius-sm)';warning.style.fontSize='12px';
+      warning.textContent='⚠ Best achievable CPOL ('+fmtRate(data.idealNetCPOL)+') is ₹'+diff+' above target ('+fmtRate(targetVal)+'). Remove expensive partners or adjust target.';
     }
-  } else {
-    warning.style.display = 'none';
-    warning.textContent   = '';
-  }
+  } else {warning.style.display='none';warning.textContent='';}
 }
 
 function collectAllocations(){
   snapshotAllocValues();
   const allocations={};
-  allocSelected.forEach(p=>{ allocations[p]=Number(allocValues[p])||0; });
+  allocSelected.forEach(p=>{allocations[p]=Number(allocValues[p])||0;});
   return allocations;
 }
 
-let allocSimTimer=null;
-
-// Live total % bar — shows running sum of selected partners' allocations.
-// When partners are added/removed, redistribute existing allocations to sum to 100%.
-// FIX: stray "async" keyword removed — redistributeAllocToHundred is synchronous.
 function redistributeAllocToHundred(){
   const selected=Array.from(allocSelected);
-  if(!selected.length) return;
+  if(!selected.length)return;
   const currentTotal=selected.reduce((s,p)=>s+Number(allocValues[p]||0),0);
-  if(currentTotal<0.01){
-    // No allocations set yet — give equal share to each
-    const eq=round2(100/selected.length);
-    selected.forEach(p=>{ allocValues[p]=eq; });
-  } else {
-    // Scale existing allocations proportionally to sum to 100
+  if(currentTotal<0.01){const eq=round2(100/selected.length);selected.forEach(p=>{allocValues[p]=eq;});}
+  else{
     const scale=100/currentTotal;
-    selected.forEach(p=>{ allocValues[p]=round2((Number(allocValues[p])||0)*scale); });
-    // Fix rounding: ensure last partner makes up remainder
+    selected.forEach(p=>{allocValues[p]=round2((Number(allocValues[p])||0)*scale);});
     const adj=round2(selected.reduce((s,p)=>s+(allocValues[p]||0),0));
-    if(Math.abs(adj-100)>0.01){
-      allocValues[selected[selected.length-1]]=round2((allocValues[selected[selected.length-1]]||0)+(100-adj));
-    }
+    if(Math.abs(adj-100)>0.01)allocValues[selected[selected.length-1]]=round2((allocValues[selected[selected.length-1]]||0)+(100-adj));
   }
   updateAllocTotalBar();
 }
 
 function updateAllocTotalBar(){
-  let total=0;
-  allocSelected.forEach(p=>{ total+=Number(allocValues[p])||0; });
+  let total=0;allocSelected.forEach(p=>{total+=Number(allocValues[p])||0;});
   const bar=document.getElementById('alloc-total-bar');
   const pctEl=document.getElementById('alloc-total-pct');
-  if(!bar||!pctEl) return;
+  if(!bar||!pctEl)return;
   const filled=Math.min(100,total);
-  const ok=Math.abs(total-100)<0.5;
-  const over=total>100.5;
+  const ok=Math.abs(total-100)<0.5,over=total>100.5;
   bar.style.background=over?'var(--bad)':ok?'var(--good)':'var(--accent-2)';
   bar.style.width=filled+'%';
   pctEl.textContent=total.toFixed(1)+'% allocated'+(ok?' ✓':over?' — over 100%':'');
   pctEl.style.color=over?'var(--bad)':ok?'var(--good)':'var(--text)';
 }
 
-// Mode switch: re-render table so editable/display cells flip
-function onAllocModeChange(){
-  if(lastAllocData) renderAllocTable(lastAllocData);
-}
+function onAllocModeChange(){if(lastAllocData)renderAllocTable(lastAllocData);}
 
 function runAllocationSimulation(){
   allocTotalVolume=Number(document.getElementById('alloc-total-volume').value)||0;
   allocTargetCPO=document.getElementById('alloc-target-cpo').value===''?null:Number(document.getElementById('alloc-target-cpo').value);
   snapshotAllocValues();
-
-  if(allocTotalVolume<=0){
-    renderAllocTable(lastAllocData);
-    return;
-  }
-
+  if(allocTotalVolume<=0){renderAllocTable(lastAllocData);return;}
   clearTimeout(allocSimTimer);
   allocSimTimer=setTimeout(async()=>{
     const tbody=document.querySelector('#tbl-alloc tbody');
-    if(tbody && !tbody.children.length)tbody.innerHTML='<tr class="empty-row"><td colspan="7">Calculating…</td></tr>';
+    if(tbody&&!tbody.children.length)tbody.innerHTML='<tr class="empty-row"><td colspan="8">Calculating…</td></tr>';
     try{
-      // FIX: allocations previously sent as JSON.stringify(). GAS URL params are flat
-      // strings — Object.keys() on a raw JSON string iterates character indices not
-      // partner names. Now sent as individual alloc_PartnerName=pct params.
-      const allocObj = collectAllocations();
-      const simParams = {
-        totalVolume: allocTotalVolume,
-        targetCpol: allocTargetCPO == null ? '' : allocTargetCPO
-      };
-      Object.keys(allocObj).forEach(p => { simParams['alloc_' + p] = allocObj[p]; });
-      const data=await apiGet('simulateAllocation', simParams);
+      const allocObj=collectAllocations();
+      const simParams={totalVolume:allocTotalVolume,targetCpol:allocTargetCPO==null?'':allocTargetCPO};
+      Object.keys(allocObj).forEach(p=>{simParams['alloc_'+p]=allocObj[p];});
+      const data=await apiGet('simulateAllocation',simParams);
       renderAllocTable(data);
     }catch(err){
-      if(tbody)tbody.innerHTML='<tr class="empty-row"><td colspan="6">Unable to calculate: '+err.message+'</td></tr>';
+      if(tbody)tbody.innerHTML='<tr class="empty-row"><td colspan="8">Unable to calculate: '+err.message+'</td></tr>';
       updateAllocSummary(null);
     }
   },120);
@@ -1104,39 +772,23 @@ async function initialiseAllocationSimulator(){
   const totalInput=document.getElementById('alloc-total-volume');
   const targetInput=document.getElementById('alloc-target-cpo');
   if(!totalInput||!targetInput)return;
-
-  totalInput.addEventListener('input',()=>{
-    // Rerender to update Ideal Split and displayed volumes
-    if(lastAllocData) renderAllocTable(lastAllocData);
-    runAllocationSimulation();
-  });
+  totalInput.addEventListener('input',()=>{if(lastAllocData)renderAllocTable(lastAllocData);runAllocationSimulation();});
   targetInput.addEventListener('input',runAllocationSimulation);
   const modeInput=document.getElementById('alloc-input-mode');
-  if(modeInput) modeInput.addEventListener('change',onAllocModeChange);
-
+  if(modeInput)modeInput.addEventListener('change',onAllocModeChange);
   document.getElementById('btn-alloc-reset').addEventListener('click',()=>{
-    totalInput.value='';
-    targetInput.value='';
-    allocRows={};
-    allocSelected=new Set();
-    allocValues={};
-    lastAllocData=null;
+    totalInput.value='';targetInput.value='';
+    allocRows={};allocSelected=new Set();allocValues={};lastAllocData=null;
     renderAllocTable(null);
   });
-
   try{
-    // On init: fetch partner list only (totalVolume=0) so we can populate the
-    // partner dropdown. Ideal/Applicable columns will show — until user types volume.
     const data=await apiGet('simulateAllocation',{totalVolume:0});
-    if(data && data.rows){
+    if(data&&data.rows){
       allocSelected=new Set(data.rows.map(r=>r.partner));
-      // Do NOT seed allocValues from historical — keep at 0
-      data.rows.forEach(r=>{ allocValues[r.partner]=0; });
+      data.rows.forEach(r=>{allocValues[r.partner]=0;});
       renderAllocTable(data);
     }
-  }catch(err){
-    renderAllocTable(null);
-  }
+  }catch(err){renderAllocTable(null);}
 }
 
 function renderAllDashboardData(data){
@@ -1146,19 +798,14 @@ function renderAllDashboardData(data){
   const cpolTh=document.getElementById('th-cpol');
   if(cpolTh)cpolTh.textContent=cpolLabel;
   renderKpis(data.kpis||{});
-  renderRowsTable('tbl-partner',data.byPartner,true,true);
-  renderRowsTable('tbl-zone',data.byZone,false,true);
-  renderMatrix(data.partnerXZone);
+  renderPartnerTable(data.byPartner||[]);
   renderTrendChart('trend-cpol-canvas',data.trend,3,'#3d6fd9',fmtRate);
   renderTrendChart('trend-orders-canvas',data.trend,1,'#1f9d5c',fmtNum);
-  renderPartnerCpolComparison(data.byPartner);
-  renderPartnerPieChart(data.byPartner);
+  renderCpolBar(data.byPartner||[]);
+  renderPieChart(data.byPartner||[]);
   const granLabel={day:'Daily',week:'Weekly',month:'Monthly'}[data.trendGranularity||'day'];
   document.getElementById('trend-title').textContent='CPOL & Order Volume Trend ('+granLabel+')';
-  // FIX: removed computeHistoricalShare(), syncAllocTotals(), runAllocOptimizer()
-  // — these are from the old optimizer and are not defined in this file.
-  // The new allocation simulator is self-contained; re-run it when dashboard refreshes.
-  if(allocSelected.size && allocTotalVolume > 0) runAllocationSimulation();
+  if(allocSelected.size&&allocTotalVolume>0)runAllocationSimulation();
 }
 
 async function loadDashboard(){
@@ -1176,21 +823,15 @@ async function loadDashboard(){
     renderAllDashboardData(data);
     setStatus('Updated '+new Date().toLocaleTimeString());
   }catch(err){
-    setStatus('Failed to load dashboard: '+err.message,'error');
+    setStatus('Failed to load: '+err.message,'error');
   }
 }
 
-// FIX: removed premature standalone initialiseAllocationSimulator() call here.
-// It was firing before loadFilters() completed (partners not yet known) and the
-// allocInitialised guard was then blocking the correct call inside init().
-// Now only called inside init() after await loadFilters().
-
-['f-partner','f-zone','f-type','f-payment'].forEach(id=>document.getElementById(id).addEventListener('change',loadDashboard));
+['f-partner','f-type','f-payment'].forEach(id=>document.getElementById(id).addEventListener('change',loadDashboard));
 ['f-from','f-to'].forEach(id=>document.getElementById(id).addEventListener('change',loadDashboard));
 
 document.getElementById('btn-reset').addEventListener('click',()=>{
   document.getElementById('f-partner').value='All';
-  document.getElementById('f-zone').value='All';
   document.getElementById('f-type').value='Combined';
   document.getElementById('f-payment').value='All';
   setGranularity('day');
@@ -1206,14 +847,14 @@ document.querySelectorAll('#granularity-seg button').forEach(btn=>{
 });
 
 window.addEventListener('resize',()=>{
-  const partnerTrs=Array.from(document.querySelectorAll('#tbl-partner tbody tr')).filter(tr=>!tr.classList.contains('empty-row')&&!tr.classList.contains('total-row')&&!tr.classList.contains('rvp-row'));
-  const partnerCpolRows=partnerTrs.map(tr=>[tr.children[0].textContent.replace('🏆 ',''),Number(tr.children[7].textContent.replace(/[^\d.-]/g,''))]).filter(r=>r[1]>0&&isFinite(r[1]));
-  if(partnerCpolRows.length)drawBarChart('chart-partner-cpol',partnerCpolRows,fmtRate,(item,i)=>i===0?'#33c07a':BAR_COLORS[i%BAR_COLORS.length]);
+  const trs=Array.from(document.querySelectorAll('#tbl-partner tbody tr')).filter(tr=>!tr.classList.contains('empty-row')&&!tr.classList.contains('total-row')&&!tr.classList.contains('rvp-row'));
+  const items=trs.map(tr=>[tr.children[0].textContent.replace('🏆 ',''),Number(tr.children[7].textContent.replace(/[^\d.-]/g,''))]).filter(r=>r[1]>0&&isFinite(r[1]));
+  if(items.length)drawBarChart('chart-partner-cpol',items,fmtRate,(item,i)=>i===0?'#33c07a':BAR_COLORS[i%BAR_COLORS.length]);
 });
 
 (async function init(){
   setStatus('Loading filters…','loading');
-  renderAllocTable();
+  renderAllocTable(null);
   try{
     await loadFilters();
     await loadDashboard();
