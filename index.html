@@ -279,6 +279,25 @@ tr.rvp-row td:first-child{color:var(--coral);font-weight:700;}
         <span id="alloc-bar-label" style="font-size:12px;font-weight:600;min-width:140px;text-align:right;color:var(--muted);">0.0% allocated</span>
       </div>
 
+      <!-- Per-partner min/max bounds -->
+      <div id="bounds-section" style="margin-bottom:14px;display:none;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+          color:var(--muted);margin-bottom:8px;">Per-partner bounds (hard floor 2% · ceiling 70%)</div>
+        <div style="overflow-x:auto;">
+          <table id="tbl-bounds" style="min-width:700px;">
+            <thead><tr>
+              <th style="text-align:left;">Partner</th>
+              <th>Hist Alloc%</th>
+              <th>Unit CPOL</th>
+              <th>Min %</th>
+              <th>Max %</th>
+              <th style="font-size:10px;color:var(--muted);">Allowed range</th>
+            </tr></thead>
+            <tbody id="bounds-body"></tbody>
+          </table>
+        </div>
+      </div>
+
       <div style="overflow-x:auto;">
         <table id="tbl-alloc" style="min-width:1100px;">
           <thead>
@@ -300,13 +319,21 @@ tr.rvp-row td:first-child{color:var(--coral);font-weight:700;}
 
       <!-- Summary -->
       <div style="display:flex;justify-content:flex-end;gap:12px;flex-wrap:wrap;margin-top:18px;">
+        <div class="mini-stat" style="--mini-accent:var(--muted);--mini-tint:var(--panel-2);">
+          <span class="mini-label">Historical CPOL</span>
+          <span class="mini-value" id="sum-hist-cpol">—</span>
+        </div>
+        <div class="mini-stat" style="--mini-accent:var(--teal);--mini-tint:var(--teal-tint);">
+          <span class="mini-label">Ideal CPOL <span style="font-size:9px;opacity:.7;">(1/CPOL split)</span></span>
+          <span class="mini-value" id="sum-ideal-cpol">—</span>
+        </div>
+        <div class="mini-stat" style="--mini-accent:var(--good);--mini-tint:var(--good-tint);">
+          <span class="mini-label">Ideal Improvement</span>
+          <span class="mini-value" id="sum-ideal-improve">—</span>
+        </div>
         <div class="mini-stat" style="--mini-accent:var(--accent-2);--mini-tint:var(--accent-tint-strong);">
           <span class="mini-label">Projected Cost</span>
           <span class="mini-value" id="sum-cost">—</span>
-        </div>
-        <div class="mini-stat" style="--mini-accent:var(--teal);--mini-tint:var(--teal-tint);">
-          <span class="mini-label">Ideal Net CPOL</span>
-          <span class="mini-value" id="sum-ideal-cpol">—</span>
         </div>
         <div class="mini-stat" style="--mini-accent:var(--coral);--mini-tint:var(--coral-tint);">
           <span class="mini-label">Your Net CPOL</span>
@@ -323,7 +350,7 @@ tr.rvp-row td:first-child{color:var(--coral);font-weight:700;}
   </div>
 </div>
 
-<div class="footer-note">Data: Forward / Reverse / Rate Card sheets via Apps Script · Rates: Jul-26 invoice blended · RVP excluded from CPOL · Ideal = Option B (closest to target CPOL)</div>
+<div class="footer-note">Data: Forward / Reverse / Rate Card sheets via Apps Script · Rates: Jul-26 invoice blended · RVP excluded from CPOL · Ideal = Proportional bounded split (set min/max per partner · cheaper partners get more within bounds · CPOL improves from historical)</div>
 
 <script>
 const API_URL='https://script.google.com/macros/s/AKfycbxEeNAN-0yOXXtx1j4eKAZ7fV-0IB2igNchXLYv4XVObZ0LVHWWHKl0MQCPDUT18Y3hCw/exec';
@@ -557,6 +584,25 @@ function buildPartnerDropdown(rows){
   const panel=document.getElementById('dd-panel'),label=document.getElementById('dd-label');
   if(!panel||!label)return;
   panel.innerHTML='';
+  // Select All / Clear All row
+  const ctrl=document.createElement('div');
+  ctrl.style.cssText='display:flex;gap:8px;padding:6px 8px 8px;border-bottom:1px solid var(--border);margin-bottom:4px;';
+  ['Select All','Clear All'].forEach((txt,i)=>{
+    const btn=document.createElement('button');
+    btn.textContent=txt;btn.className='secondary';
+    btn.style.cssText='padding:4px 10px;font-size:11px;border-radius:6px;flex:1;cursor:pointer;';
+    btn.addEventListener('click',()=>{
+      snapshotValues();
+      const allPartners=(rows||[]).map(r=>r.partner).filter(Boolean);
+      if(i===0){allPartners.forEach(p=>allocSelected.add(p));}
+      else{allocSelected.clear();allocValues={};}
+      redistributeToHundred();
+      buildPartnerDropdown(rows);
+      if(getVolume()>0)runAlloc();
+    });
+    ctrl.appendChild(btn);
+  });
+  panel.appendChild(ctrl);
   (rows||[]).forEach(r=>{
     const p=r.partner;if(!p)return;
     const row=document.createElement('label');
@@ -612,6 +658,44 @@ function renderAllocTable(data){
   buildPartnerDropdown(rows);
   const vis=rows.filter(r=>allocSelected.has(r.partner));
   if(!vis.length){tb.innerHTML='<tr class="empty-row"><td colspan="9">Select partners above</td></tr>';updateAllocSummary(data);return;}
+
+  // Render bounds table
+  const boundsSection=document.getElementById('bounds-section');
+  const boundsTb=document.getElementById('bounds-body');
+  if(boundsSection&&boundsTb){
+    boundsSection.style.display='block';
+    boundsTb.innerHTML='';
+    vis.forEach((r,i)=>{
+      const p=r.partner;
+      const existMin=document.querySelector(`.bound-min[data-p="${p}"]`);
+      const existMax=document.querySelector(`.bound-max[data-p="${p}"]`);
+      const curMin=existMin?existMin.value:'';
+      const curMax=existMax?existMax.value:'';
+      const tr=document.createElement('tr');
+      tr.style.background=i%2===1?'var(--panel-2)':'transparent';
+      const lo=r.userMin||2, hi=r.userMax||70;
+      const bar=`<div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);">
+        <div style="flex:1;height:5px;background:var(--border);border-radius:99px;position:relative;">
+          <div style="position:absolute;left:${lo/70*100}%;right:${(100-hi/70*100)}%;height:100%;
+            background:var(--accent);border-radius:99px;"></div>
+        </div>${lo}–${hi}%</div>`;
+      tr.innerHTML=`<td style="font-weight:700;text-align:left;">${p}</td>`+
+        `<td>${(r.previousAllocationPct||0).toFixed(1)}%</td>`+
+        `<td style="color:var(--teal);font-weight:700;">${r.idealCpol!=null?fmtR(r.idealCpol):'—'}</td>`+
+        `<td><input class="bound-min" data-p="${p}" type="number" min="2" max="70" step="0.01"
+          value="${curMin}" placeholder="2" style="width:65px;text-align:right;border:1px solid var(--border);
+          border-radius:6px;padding:4px 8px;font-size:13px;"></td>`+
+        `<td><input class="bound-max" data-p="${p}" type="number" min="2" max="70" step="0.01"
+          value="${curMax}" placeholder="70" style="width:65px;text-align:right;border:1px solid var(--border);
+          border-radius:6px;padding:4px 8px;font-size:13px;"></td>`+
+        `<td>${bar}</td>`;
+      boundsTb.appendChild(tr);
+    });
+    // Wire inputs
+    boundsTb.querySelectorAll('.bound-min,.bound-max').forEach(inp=>{
+      inp.addEventListener('input',()=>runAlloc());
+    });
+  }
   const mode=getMode(),vol=getVolume();
   const thLbl=document.getElementById('th-input-label');
   if(thLbl)thLbl.textContent=mode==='volume'?'Input Vol':'Input %';
@@ -658,46 +742,102 @@ function renderAllocTable(data){
 }
 
 function updateAllocSummary(data){
-  const costEl=document.getElementById('sum-cost');
-  const netCpolEl=document.getElementById('sum-net-cpol');
-  const idealEl=document.getElementById('sum-ideal-cpol');
-  const varEl=document.getElementById('sum-variance');
-  if(!costEl)return;
-  costEl.textContent     =data&&isFinite(data.projectedCost)?fmtM(data.projectedCost):'—';
-  const _hasAlloc=data&&(data.inputAllocationPct||0)>0.01;
-  netCpolEl.textContent  =_hasAlloc&&data&&isFinite(data.netCPOL)?fmtR(data.netCPOL):'—';
-  idealEl.textContent    =data&&isFinite(data.idealNetCPOL)?fmtR(data.idealNetCPOL):'—';
-  const warn=document.getElementById('alloc-warn');warn.style.cssText='';
-  if(!data){warn.style.display='none';if(varEl)varEl.textContent='—';return;}
+  const costEl    = document.getElementById('sum-cost');
+  const netCpolEl = document.getElementById('sum-net-cpol');
+  const idealEl   = document.getElementById('sum-ideal-cpol');
+  const varEl     = document.getElementById('sum-variance');
+  const histEl    = document.getElementById('sum-hist-cpol');
+  const improveEl = document.getElementById('sum-ideal-improve');
+  const warn      = document.getElementById('alloc-warn');
+  if(!costEl) return;
 
-  // Variance = user's net CPOL vs target
-  const target=getTarget();
-  const hasAlloc=data.inputAllocationPct>0.01;
-  if(target!=null&&data.netCPOL!=null&&isFinite(data.netCPOL)&&hasAlloc){
-    const diff=r2(data.netCPOL-target);
-    if(varEl)varEl.textContent=(diff>0?'+':'')+fmtR(diff);
-    if(varEl)varEl.style.color=diff<=0?'var(--good)':diff<2?'var(--warn)':'var(--bad)';
-    if(data.allocationValid===false){
-      warn.style.display='block';warn.style.cssText='display:block;margin-top:14px;padding:12px 16px;border-radius:12px;font-size:12px;font-weight:600;background:var(--bad-tint-strong);border:1px solid var(--bad-border);color:var(--bad);';
-      warn.textContent='⚠ Allocation must total 100%. Current: '+(data.inputAllocationPct||0).toFixed(1)+'%';
-    } else if(diff<=0){
-      warn.style.display='block';warn.style.cssText='display:block;margin-top:14px;padding:12px 16px;border-radius:12px;font-size:12px;font-weight:600;background:var(--good-tint-strong);border:1px solid var(--good);color:var(--good);';
-      warn.textContent=`✓ Your CPOL (${fmtR(data.netCPOL)}) is ₹${Math.abs(diff)} below target (${fmtR(target)}). Ideal (Option B): ${fmtR(data.idealNetCPOL)}.`;
+  if(!data){
+    [costEl,netCpolEl,idealEl,varEl,improveEl].forEach(e=>{if(e)e.textContent='—';});
+    if(histEl) histEl.textContent='—';
+    if(warn) warn.style.display='none';
+    return;
+  }
+
+  const hasAlloc = (data.inputAllocationPct||0) > 0.01;
+  const target   = getTarget();
+
+  if(histEl) histEl.textContent = data.historicalPortfolioCpol>0 ? fmtR(data.historicalPortfolioCpol) : '—';
+  idealEl.textContent = data.idealNetCPOL > 0 ? fmtR(data.idealNetCPOL) : '—';
+  costEl.textContent  = hasAlloc && isFinite(data.projectedCost) ? fmtM(data.projectedCost) : '—';
+
+  // Ideal improvement vs historical
+  if(improveEl){
+    const imp = data.idealImprovement;
+    if(imp!=null && imp>0){
+      improveEl.textContent = '▼ '+fmtR(imp);
+      improveEl.style.color = 'var(--good)';
+    } else if(imp!=null && imp<0){
+      improveEl.textContent = '▲ '+fmtR(Math.abs(imp));
+      improveEl.style.color = 'var(--bad)';
     } else {
-      warn.style.display='block';warn.style.cssText='display:block;margin-top:14px;padding:12px 16px;border-radius:12px;font-size:12px;font-weight:600;background:var(--warn-tint);border:1px solid var(--warn);color:var(--warn);';
-      warn.textContent=`⚠ Your CPOL (${fmtR(data.netCPOL)}) is ₹${diff} above target. Ideal allocation (Option B) achieves ${fmtR(data.idealNetCPOL)}.`;
+      improveEl.textContent = '—';
+      improveEl.style.color = 'var(--muted)';
     }
+  }
+
+  // Your Net CPOL
+  if(netCpolEl){
+    netCpolEl.textContent = hasAlloc && data.netCPOL!=null ? fmtR(data.netCPOL) : '—';
+    if(hasAlloc && data.netCPOL!=null && data.historicalPortfolioCpol>0){
+      netCpolEl.style.color = data.netCPOL < data.historicalPortfolioCpol ? 'var(--good)' : 'var(--warn)';
+    } else { netCpolEl.style.color = 'var(--coral)'; }
+  }
+
+  // Variance to target
+  warn.style.cssText = '';
+  if(target!=null && hasAlloc && data.netCPOL!=null){
+    const diff = r2(data.netCPOL - target);
+    if(varEl){ varEl.textContent=(diff>0?'+':'')+fmtR(diff); varEl.style.color=diff<=0?'var(--good)':diff<2?'var(--warn)':'var(--bad)'; }
+    if(!data.allocationValid){
+      _showWarn(warn,'⚠','bad',`Allocation must total 100%. Current: ${(data.inputAllocationPct||0).toFixed(1)}%`);
+    } else if(diff<=0){
+      _showWarn(warn,'✓','good',`Your CPOL ${fmtR(data.netCPOL)} is ₹${Math.abs(diff)} below target. Ideal split achieves ${fmtR(data.idealNetCPOL)}.`);
+    } else {
+      _showWarn(warn,'⚠','warn',`Your CPOL ${fmtR(data.netCPOL)} is ₹${diff} above target. Ideal 1/CPOL split achieves ${fmtR(data.idealNetCPOL)}.`);
+    }
+  } else if(target!=null && hasAlloc){
+    if(varEl){ varEl.textContent='—'; varEl.style.color='var(--muted)'; }
+    if(!data.allocationValid){ _showWarn(warn,'⚠','bad',`Allocation must total 100%. Current: ${(data.inputAllocationPct||0).toFixed(1)}%`); }
+    else warn.style.display='none';
+  } else if(!hasAlloc && data.idealNetCPOL>0 && data.historicalPortfolioCpol>0){
+    if(varEl){ varEl.textContent='—'; varEl.style.color='var(--muted)'; }
+    const impStr = data.idealImprovement>0 ? `▼ ₹${data.idealImprovement} vs historical` : 'No improvement possible';
+    _showWarn(warn,'💡','teal',`Ideal 1/CPOL split achieves ${fmtR(data.idealNetCPOL)} (${impStr}). Enter your % above to compare.`);
   } else {
-    if(varEl){varEl.textContent='—';varEl.style.color='var(--muted)';}
-    if(data.allocationValid===false&&hasAlloc){
-      warn.style.display='block';warn.style.cssText='display:block;margin-top:14px;padding:12px 16px;border-radius:12px;font-size:12px;font-weight:600;background:var(--bad-tint-strong);border:1px solid var(--bad-border);color:var(--bad);';
-      warn.textContent='⚠ Allocation must total 100%. Current: '+(data.inputAllocationPct||0).toFixed(1)+'%';
-    } else {warn.style.display='none';}
+    if(varEl){ varEl.textContent='—'; varEl.style.color='var(--muted)'; }
+    if(!data.allocationValid && hasAlloc){ _showWarn(warn,'⚠','bad',`Allocation must total 100%. Current: ${(data.inputAllocationPct||0).toFixed(1)}%`); }
+    else warn.style.display='none';
   }
 }
 
+function _showWarn(el, icon, type, msg){
+  const palette={'good':'var(--good-tint-strong),var(--good)','bad':'var(--bad-tint-strong),var(--bad-border)','warn':'var(--warn-tint),var(--warn)','teal':'var(--teal-tint),var(--teal)'};
+  const [bg,border]=(palette[type]||palette.warn).split(',');
+  el.style.cssText=`display:block;margin-top:14px;padding:12px 16px;border-radius:12px;font-size:12px;font-weight:600;background:${bg};border:1px solid ${border};color:${border};`;
+  el.textContent=`${icon} ${msg}`;
+}
+
 function collectAllocs(){
-  snapshotValues();const a={};allocSelected.forEach(p=>{a[p]=allocValues[p]||0;});return a;
+  snapshotValues();
+  const a={};
+  allocSelected.forEach(p=>{ a[p]=allocValues[p]||0; });
+  return a;
+}
+
+function collectBounds(){
+  const mins={}, maxs={};
+  document.querySelectorAll('.bound-min').forEach(inp=>{
+    const v=parseFloat(inp.value); if(isFinite(v)&&v>=0) mins[inp.dataset.p]=v;
+  });
+  document.querySelectorAll('.bound-max').forEach(inp=>{
+    const v=parseFloat(inp.value); if(isFinite(v)&&v>=0) maxs[inp.dataset.p]=v;
+  });
+  return {mins,maxs};
 }
 
 function runAlloc(){
@@ -710,6 +850,9 @@ function runAlloc(){
       const params={totalVolume:vol,inputMode:mode};
       if(target!=null)params.targetCpol=target;
       Object.entries(allocs).forEach(([p,v])=>{params['alloc_'+p]=v;});
+      const {mins,maxs}=collectBounds();
+      Object.entries(mins).forEach(([p,v])=>{params['min_'+p]=v;});
+      Object.entries(maxs).forEach(([p,v])=>{params['max_'+p]=v;});
       const data=await apiGet('simulateAllocation',params);
       renderAllocTable(data);
     }catch(err){
