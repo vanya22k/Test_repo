@@ -113,6 +113,13 @@ tr.rvp-row td:first-child{color:var(--coral);font-weight:700;}
 .section-eyebrow h2{font-size:13px;margin:0;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700;}
 .section-eyebrow::after{content:'';flex:1;height:1px;background:var(--border);}
 .footer-note{color:var(--muted);font-size:11px;margin-top:48px;text-align:center;}
+tr.sc-row{cursor:pointer;}
+tr.sc-row.selected td{background:var(--accent-tint-strong);}
+tr.sc-row.sc-current td:first-child{color:var(--muted);}
+tr.sc-row.sc-recommended td{background:var(--good-tint);}
+tr.sc-row.sc-recommended td:first-child{color:var(--good);font-weight:800;}
+tr.sc-row.sc-best td:first-child::after{content:' 🏆';}
+.eyebrow-small{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;}
 </style>
 </head>
 <body>
@@ -232,125 +239,120 @@ tr.rvp-row td:first-child{color:var(--coral);font-weight:700;}
   </div>
 </div>
 
-<!-- 4. SIMULATOR -->
+<!-- 4. SCENARIO SIMULATOR -->
 <div class="section-block">
-  <div class="section-eyebrow"><span class="num">4</span><h2>Allocation Simulator</h2></div>
+  <div class="section-eyebrow"><span class="num">4</span><h2>Allocation Scenario Simulator</h2></div>
   <div class="panels">
     <div class="panel full">
       <div class="panel-head">
-        <h2>Allocation Simulator</h2>
-        <button id="btn-alloc-reset" class="secondary">Reset</button>
+        <h2>Scenario Comparison <span style="color:var(--good);font-size:11px;font-weight:600;text-transform:none;">(smart balanced mix, not just cheapest)</span></h2>
+        <button id="btn-sc-reset" class="secondary">Reset</button>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:16px;max-width:760px;">
+        Set a min%/max% range for each partner below. The engine never dumps all volume on the cheapest
+        partner — it finds the most <b>balanced</b> mix within your ranges that still pushes overall CPOL
+        as low as possible. Each scenario below is an independently optimized mix for a progressively
+        tighter CPOL target, so CPOL steps down scenario by scenario toward the Recommended mix (whenever
+        your ranges make that possible).
       </div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px;margin-bottom:16px;">
         <div class="field">
-          <label>Target CPOL (₹)</label>
-          <input type="number" id="alloc-target" placeholder="e.g. 35" min="0" step="0.01" style="width:100%;">
+          <label>Total Volume (next period)</label>
+          <input type="number" id="sc-volume" placeholder="e.g. 50000" min="0" step="1" style="width:100%;">
         </div>
         <div class="field">
-          <label>Total Volume</label>
-          <input type="number" id="alloc-volume" placeholder="Total orders" min="0" step="1" style="width:100%;">
+          <label>Target CPOL (₹) <span style="font-weight:400;text-transform:none;">optional</span></label>
+          <input type="number" id="sc-target" placeholder="blank = best possible" min="0" step="0.01" style="width:100%;">
         </div>
         <div class="field">
-          <label>Input Mode</label>
-          <select id="alloc-mode" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--panel);color:var(--text);font-size:13px;">
-            <option value="pct">Enter % per partner</option>
-            <option value="volume">Enter Volume per partner</option>
-          </select>
+          <label>Intermediate Scenarios</label>
+          <div class="seg" id="sc-steps-seg">
+            <button data-steps="1">1</button>
+            <button data-steps="2" class="active">2</button>
+            <button data-steps="3">3</button>
+          </div>
         </div>
         <div class="field" style="position:relative;">
           <label>Partners</label>
-          <button type="button" id="dd-btn" style="width:100%;background:var(--panel);border:1px solid var(--border);
+          <button type="button" id="sc-dd-btn" style="width:100%;background:var(--panel);border:1px solid var(--border);
             color:var(--text);padding:10px 12px;border-radius:8px;font-size:13px;text-align:left;
             display:flex;justify-content:space-between;align-items:center;cursor:pointer;box-shadow:none;font-weight:400;">
-            <span id="dd-label">Select partners…</span><span style="color:var(--muted);font-size:11px;">▾</span>
+            <span id="sc-dd-label">All partners</span><span style="color:var(--muted);font-size:11px;">▾</span>
           </button>
-          <div id="dd-panel" style="display:none;position:absolute;top:100%;left:0;right:0;margin-top:4px;
+          <div id="sc-dd-panel" style="display:none;position:absolute;top:100%;left:0;right:0;margin-top:4px;
             background:var(--panel);border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow);
             z-index:20;min-width:220px;max-height:260px;overflow-y:auto;padding:6px;"></div>
         </div>
       </div>
 
-      <!-- Allocation progress bar -->
-      <div style="margin-bottom:12px;display:flex;align-items:center;gap:12px;">
-        <div style="flex:1;height:6px;border-radius:99px;background:var(--border);overflow:hidden;">
-          <div id="alloc-bar" style="height:100%;width:0%;border-radius:99px;transition:.2s;background:var(--accent-2);"></div>
-        </div>
-        <span id="alloc-bar-label" style="font-size:12px;font-weight:600;min-width:140px;text-align:right;color:var(--muted);">0.0% allocated</span>
-      </div>
-
       <!-- Per-partner min/max bounds -->
-      <div id="bounds-section" style="margin-bottom:14px;display:none;">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
-          color:var(--muted);margin-bottom:8px;">Per-partner bounds (hard floor 2% · ceiling 70%)</div>
+      <div style="margin-bottom:18px;">
+        <div class="eyebrow-small">Per-partner bounds (hard floor 2% · ceiling 70%) — this is the only allocation input</div>
         <div style="overflow-x:auto;">
-          <table id="tbl-bounds" style="min-width:700px;">
+          <table id="sc-tbl-bounds" style="min-width:560px;">
             <thead><tr>
               <th style="text-align:left;">Partner</th>
-              <th>Hist Alloc%</th>
+              <th>Current Alloc%</th>
               <th>Unit CPOL</th>
               <th>Min %</th>
               <th>Max %</th>
               <th style="font-size:10px;color:var(--muted);">Allowed range</th>
             </tr></thead>
-            <tbody id="bounds-body"></tbody>
+            <tbody id="sc-bounds-body"></tbody>
           </table>
         </div>
       </div>
 
-      <div style="overflow-x:auto;">
-        <table id="tbl-alloc" style="min-width:1100px;">
-          <thead>
-            <tr>
-              <th>Partner</th>
-              <th>Prev Alloc%</th>
-              <th>Ideal Vol (Ideal%)</th>
-              <th id="th-input-label">Input %</th>
-              <th>Input Vol</th>
-              <th>Applicable CPOL</th>
-              <th>Historical CPOL</th>
-              <th>Ideal CPOL</th>
-              <th>Deviation from Ideal</th>
-            </tr>
-          </thead>
-          <tbody id="alloc-body"></tbody>
-        </table>
-      </div>
-
-      <!-- Summary -->
-      <div style="display:flex;justify-content:flex-end;gap:12px;flex-wrap:wrap;margin-top:18px;">
+      <!-- Reference stats -->
+      <div style="display:flex;justify-content:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:18px;">
         <div class="mini-stat" style="--mini-accent:var(--muted);--mini-tint:var(--panel-2);">
-          <span class="mini-label">Historical CPOL</span>
-          <span class="mini-value" id="sum-hist-cpol">—</span>
-        </div>
-        <div class="mini-stat" style="--mini-accent:var(--teal);--mini-tint:var(--teal-tint);">
-          <span class="mini-label">Ideal CPOL <span style="font-size:9px;opacity:.7;">(1/CPOL split)</span></span>
-          <span class="mini-value" id="sum-ideal-cpol">—</span>
-        </div>
-        <div class="mini-stat" style="--mini-accent:var(--good);--mini-tint:var(--good-tint);">
-          <span class="mini-label">Ideal Improvement</span>
-          <span class="mini-value" id="sum-ideal-improve">—</span>
-        </div>
-        <div class="mini-stat" style="--mini-accent:var(--accent-2);--mini-tint:var(--accent-tint-strong);">
-          <span class="mini-label">Projected Cost</span>
-          <span class="mini-value" id="sum-cost">—</span>
+          <span class="mini-label">Actual Historical CPOL</span>
+          <span class="mini-value" id="sc-sum-hist">—</span>
         </div>
         <div class="mini-stat" style="--mini-accent:var(--coral);--mini-tint:var(--coral-tint);">
-          <span class="mini-label">Your Net CPOL</span>
-          <span class="mini-value" id="sum-net-cpol">—</span>
+          <span class="mini-label">Current Mix CPOL <span style="font-size:9px;opacity:.7;">(projected)</span></span>
+          <span class="mini-value" id="sc-sum-current">—</span>
         </div>
-        <div class="mini-stat" style="--mini-accent:var(--warn);--mini-tint:var(--warn-tint);">
-          <span class="mini-label">Variance to Target</span>
-          <span class="mini-value" id="sum-variance">—</span>
+        <div class="mini-stat" style="--mini-accent:var(--good);--mini-tint:var(--good-tint);">
+          <span class="mini-label">Recommended CPOL</span>
+          <span class="mini-value" id="sc-sum-recommended">—</span>
+        </div>
+        <div class="mini-stat" style="--mini-accent:var(--accent-2);--mini-tint:var(--accent-tint-strong);">
+          <span class="mini-label">Improvement</span>
+          <span class="mini-value" id="sc-sum-improve">—</span>
         </div>
       </div>
 
-      <div id="alloc-warn" style="display:none;margin-top:14px;padding:12px 16px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;"></div>
+      <div id="sc-warn" style="display:none;margin-bottom:16px;padding:12px 16px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;"></div>
+
+      <!-- Scenario comparison table -->
+      <div style="overflow-x:auto;">
+        <table id="sc-tbl-compare" style="min-width:700px;">
+          <thead id="sc-compare-head"></thead>
+          <tbody id="sc-compare-body"></tbody>
+        </table>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;">Click a row to see its partner-by-partner breakdown below.</div>
+
+      <!-- Detail breakdown for selected scenario -->
+      <div style="margin-top:24px;">
+        <div class="eyebrow-small">Breakdown — <span id="sc-detail-label">Current</span></div>
+        <div style="overflow-x:auto;">
+          <table id="sc-tbl-detail">
+            <thead><tr>
+              <th>Partner</th><th>Allocation %</th><th>Volume</th>
+              <th>Net Delivered</th><th>Applicable CPOL</th><th>Cost</th>
+            </tr></thead>
+            <tbody id="sc-detail-body"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="footer-note">Data: Forward / Reverse / Rate Card sheets via Apps Script · Rates: Jul-26 invoice blended · RVP excluded from CPOL · Ideal = Proportional bounded split (set min/max per partner · cheaper partners get more within bounds · CPOL improves from historical)</div>
+<div class="footer-note">Data: Forward / Reverse / Rate Card sheets via Apps Script · Rates: Jul-26 invoice blended · RVP excluded from CPOL · Scenario mix = smart balanced split within your per-partner bounds (cheaper partners get more within bounds · progressively rebalanced from Current → Recommended)</div>
 
 <script>
 const API_URL='https://script.google.com/macros/s/AKfycbxEeNAN-0yOXXtx1j4eKAZ7fV-0IB2igNchXLYv4XVObZ0LVHWWHKl0MQCPDUT18Y3hCw/exec';
@@ -363,6 +365,7 @@ function fmtR(n){if(n==null||!isFinite(n))return'—';return CUR+n.toLocaleStrin
 function rgba(hex,a){const h=hex.replace('#','');const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);return`rgba(${r},${g},${b},${a})`;}
 
 let gran='day'; const dashCache=new Map();
+let ALL_PARTNERS=[];
 
 function setStatus(msg,cls){
   const el=document.getElementById('status');el.textContent=msg||'';el.className=cls||'';
@@ -382,7 +385,8 @@ async function loadFilters(){
   const f=await apiGet('filters');
   const ps=document.getElementById('f-partner');
   const zs=document.getElementById('f-zone');
-  (f.partners||[]).forEach(p=>ps.appendChild(new Option(p,p)));
+  ALL_PARTNERS=f.partners||[];
+  ALL_PARTNERS.forEach(p=>ps.appendChild(new Option(p,p)));
   (f.zones||[]).forEach(z=>zs.appendChild(new Option(z,z)));
   if(f.dateMin)document.getElementById('f-from').value=f.dateMin.slice(0,10);
   if(f.dateMax)document.getElementById('f-to').value=f.dateMax.slice(0,10);
@@ -568,23 +572,22 @@ function drawPie(items){
   cv.onmouseleave=()=>{tt.style.display='none';cv.style.cursor='default';};
 }
 
-// ── Allocation Simulator ──
-let allocSelected=new Set(),allocValues={},lastAllocData=null,allocTimer=null;
+// ── Scenario Simulator ──
+let scSelected=new Set(), scBounds={}, scSteps=2, scTimer=null, lastScData=null, scSelectedKey=null;
 
-document.getElementById('dd-btn').addEventListener('click',e=>{
+document.getElementById('sc-dd-btn').addEventListener('click',e=>{
   e.stopPropagation();
-  const p=document.getElementById('dd-panel');p.style.display=p.style.display==='none'?'block':'none';
+  const p=document.getElementById('sc-dd-panel');p.style.display=p.style.display==='none'?'block':'none';
 });
 document.addEventListener('click',e=>{
-  const p=document.getElementById('dd-panel'),b=document.getElementById('dd-btn');
+  const p=document.getElementById('sc-dd-panel'),b=document.getElementById('sc-dd-btn');
   if(p&&p.style.display==='block'&&!p.contains(e.target)&&e.target!==b)p.style.display='none';
 });
 
-function buildPartnerDropdown(rows){
-  const panel=document.getElementById('dd-panel'),label=document.getElementById('dd-label');
+function buildScPartnerDropdown(){
+  const panel=document.getElementById('sc-dd-panel'),label=document.getElementById('sc-dd-label');
   if(!panel||!label)return;
   panel.innerHTML='';
-  // Select All / Clear All row
   const ctrl=document.createElement('div');
   ctrl.style.cssText='display:flex;gap:8px;padding:6px 8px 8px;border-bottom:1px solid var(--border);margin-bottom:4px;';
   ['Select All','Clear All'].forEach((txt,i)=>{
@@ -592,295 +595,223 @@ function buildPartnerDropdown(rows){
     btn.textContent=txt;btn.className='secondary';
     btn.style.cssText='padding:4px 10px;font-size:11px;border-radius:6px;flex:1;cursor:pointer;';
     btn.addEventListener('click',()=>{
-      snapshotValues();
-      const allPartners=(rows||[]).map(r=>r.partner).filter(Boolean);
-      if(i===0){allPartners.forEach(p=>allocSelected.add(p));}
-      else{allocSelected.clear();allocValues={};}
-      redistributeToHundred();
-      buildPartnerDropdown(rows);
-      if(getVolume()>0)runAlloc();
+      if(i===0) ALL_PARTNERS.forEach(p=>scSelected.add(p));
+      else scSelected.clear();
+      buildScPartnerDropdown();
+      runScenarios();
     });
     ctrl.appendChild(btn);
   });
   panel.appendChild(ctrl);
-  (rows||[]).forEach(r=>{
-    const p=r.partner;if(!p)return;
+  ALL_PARTNERS.forEach(p=>{
     const row=document.createElement('label');
     row.style.cssText='display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;cursor:pointer;font-size:13px;';
     row.addEventListener('mouseenter',()=>row.style.background='var(--panel-2)');
     row.addEventListener('mouseleave',()=>row.style.background='transparent');
-    const cb=document.createElement('input');cb.type='checkbox';cb.checked=allocSelected.has(p);
+    const cb=document.createElement('input');cb.type='checkbox';cb.checked=scSelected.has(p);
     cb.addEventListener('change',()=>{
-      snapshotValues();
-      if(cb.checked)allocSelected.add(p);else{allocSelected.delete(p);delete allocValues[p];}
-      redistributeToHundred();renderAllocTable(lastAllocData);
-      if(getVolume()>0)runAlloc();
+      if(cb.checked)scSelected.add(p);else scSelected.delete(p);
+      buildScPartnerDropdown();runScenarios();
     });
     const sp=document.createElement('span');sp.textContent=p;
     row.appendChild(cb);row.appendChild(sp);panel.appendChild(row);
   });
-  label.textContent=allocSelected.size?`${allocSelected.size} partner${allocSelected.size>1?'s':''} selected`:'Select partners…';
+  label.textContent=(scSelected.size===ALL_PARTNERS.length)?'All partners':
+    (scSelected.size?`${scSelected.size} partner${scSelected.size>1?'s':''} selected`:'Select partners…');
 }
 
-function snapshotValues(){
-  document.querySelectorAll('.alloc-input').forEach(inp=>{allocValues[inp.dataset.p]=Number(inp.value)||0;});
-}
-function getVolume(){return Number(document.getElementById('alloc-volume').value)||0;}
-function getTarget(){const v=document.getElementById('alloc-target').value;return v===''?null:Number(v);}
-function getMode(){return document.getElementById('alloc-mode').value;}
+document.querySelectorAll('#sc-steps-seg button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    scSteps=Number(btn.dataset.steps);
+    document.querySelectorAll('#sc-steps-seg button').forEach(b=>b.classList.toggle('active',b===btn));
+    runScenarios();
+  });
+});
 
-function redistributeToHundred(){
-  const sel=Array.from(allocSelected);if(!sel.length)return;
-  const tot=sel.reduce((s,p)=>s+(allocValues[p]||0),0);
-  if(tot<0.01){const eq=r2(100/sel.length);sel.forEach(p=>{allocValues[p]=eq;});}
-  else{const sc=100/tot;sel.forEach(p=>{allocValues[p]=r2((allocValues[p]||0)*sc);});
-    const adj=r2(sel.reduce((s,p)=>s+(allocValues[p]||0),0));
-    if(Math.abs(adj-100)>0.01)allocValues[sel[sel.length-1]]=r2((allocValues[sel[sel.length-1]]||0)+(100-adj));}
-  updateBar();
-}
+function getScVolume(){return Number(document.getElementById('sc-volume').value)||0;}
+function getScTarget(){const v=document.getElementById('sc-target').value;return v===''?null:Number(v);}
 
-function updateBar(){
-  let tot=0;allocSelected.forEach(p=>{tot+=allocValues[p]||0;});
-  const bar=document.getElementById('alloc-bar'),lbl=document.getElementById('alloc-bar-label');
-  if(!bar||!lbl)return;
-  const ok=Math.abs(tot-100)<0.5,over=tot>100.5;
-  bar.style.background=over?'var(--bad)':ok?'var(--good)':'var(--accent-2)';
-  bar.style.width=Math.min(100,tot)+'%';
-  lbl.textContent=tot.toFixed(1)+'% allocated'+(ok?' ✓':over?' — over 100%':'');
-  lbl.style.color=over?'var(--bad)':ok?'var(--good)':'var(--text)';
-}
-
-function renderAllocTable(data){
-  const tb=document.getElementById('alloc-body');if(!tb)return;
-  lastAllocData=data;tb.innerHTML='';
-  const rows=(data&&data.rows)||[];
-  if(!rows.length){tb.innerHTML='<tr class="empty-row"><td colspan="9">Enter Target CPOL and Total Volume to begin</td></tr>';updateAllocSummary(null);buildPartnerDropdown([]);return;}
-  buildPartnerDropdown(rows);
-  const vis=rows.filter(r=>allocSelected.has(r.partner));
-  if(!vis.length){tb.innerHTML='<tr class="empty-row"><td colspan="9">Select partners above</td></tr>';updateAllocSummary(data);return;}
-
-  // Render bounds table
-  const boundsSection=document.getElementById('bounds-section');
-  const boundsTb=document.getElementById('bounds-body');
-  if(boundsSection&&boundsTb){
-    boundsSection.style.display='block';
-    boundsTb.innerHTML='';
-    vis.forEach((r,i)=>{
-      const p=r.partner;
-      const existMin=document.querySelector(`.bound-min[data-p="${p}"]`);
-      const existMax=document.querySelector(`.bound-max[data-p="${p}"]`);
-      const curMin=existMin?existMin.value:'';
-      const curMax=existMax?existMax.value:'';
-      const tr=document.createElement('tr');
-      tr.style.background=i%2===1?'var(--panel-2)':'transparent';
-      const lo=r.userMin||2, hi=r.userMax||70;
-      const bar=`<div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);">
-        <div style="flex:1;height:5px;background:var(--border);border-radius:99px;position:relative;">
-          <div style="position:absolute;left:${lo/70*100}%;right:${(100-hi/70*100)}%;height:100%;
-            background:var(--accent);border-radius:99px;"></div>
-        </div>${lo}–${hi}%</div>`;
-      tr.innerHTML=`<td style="font-weight:700;text-align:left;">${p}</td>`+
-        `<td>${(r.previousAllocationPct||0).toFixed(1)}%</td>`+
-        `<td style="color:var(--teal);font-weight:700;">${r.idealCpol!=null?fmtR(r.idealCpol):'—'}</td>`+
-        `<td><input class="bound-min" data-p="${p}" type="number" min="2" max="70" step="0.01"
-          value="${curMin}" placeholder="2" style="width:65px;text-align:right;border:1px solid var(--border);
-          border-radius:6px;padding:4px 8px;font-size:13px;"></td>`+
-        `<td><input class="bound-max" data-p="${p}" type="number" min="2" max="70" step="0.01"
-          value="${curMax}" placeholder="70" style="width:65px;text-align:right;border:1px solid var(--border);
-          border-radius:6px;padding:4px 8px;font-size:13px;"></td>`+
-        `<td>${bar}</td>`;
-      boundsTb.appendChild(tr);
-    });
-    // Wire inputs
-    boundsTb.querySelectorAll('.bound-min,.bound-max').forEach(inp=>{
-      inp.addEventListener('input',()=>runAlloc());
-    });
-  }
-  const mode=getMode(),vol=getVolume();
-  const thLbl=document.getElementById('th-input-label');
-  if(thLbl)thLbl.textContent=mode==='volume'?'Input Vol':'Input %';
-
-  vis.forEach((r,i)=>{
-    const p=r.partner;
-    const val=allocValues[p]!=null?allocValues[p]:0;
-    const inputVol=mode==='volume'?val:r2(vol*val/100);
-    const inputPct=mode==='pct'?val:(vol>0?r2(val/vol*100):0);
+function renderScBoundsTable(partners, unitCpols, currentAlloc){
+  const tb=document.getElementById('sc-bounds-body');if(!tb)return;
+  tb.innerHTML='';
+  partners.forEach((p,i)=>{
     const tr=document.createElement('tr');tr.style.background=i%2===1?'var(--panel-2)':'transparent';
-
-    const hasIdeal=r.idealVolume!=null&&r.idealPct!=null;
-    const dev=r.deviationFromIdeal;
-    const devAbs=dev==null?null:Math.abs(dev);
-    const devStr=dev==null?'—':devAbs<50?'On target ✅':(dev>0?`+${fmtN(dev)}`:fmtN(dev));
-    const devCol=dev==null?'var(--muted)':devAbs<50?'var(--good)':dev>0?'var(--warn)':'var(--teal)';
-
-    tr.innerHTML=`<td style="font-weight:700;">${p}</td>`+
-      `<td style="color:var(--muted);">${(r.previousAllocationPct||0).toFixed(1)}%</td>`+
-      `<td style="color:var(--accent-2);font-weight:700;">${hasIdeal?`${fmtN(r.idealVolume)} <span style="font-size:11px;color:var(--muted);">(${(r.idealPct||0).toFixed(1)}%)</span>`:'<span style="color:var(--muted)">—</span>'}</td>`+
-      `<td><input class="alloc-input" data-p="${p}" type="number" min="0" step="${mode==='pct'?.01:1}" value="${mode==='pct'?(val>0?val.toFixed(2):''):(inputVol>0?Math.round(inputVol):'')||''}" placeholder="0" style="width:${mode==='pct'?70:100}px;text-align:right;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:13px;"></td>`+
-      `<td style="color:var(--muted);font-size:12px;">${mode==='pct'?(inputVol>0?fmtN(Math.round(inputVol)):'—'):(inputPct>0?inputPct.toFixed(1)+'%':'—')}</td>`+
-      `<td style="font-weight:800;color:var(--accent-2);">${r.applicableCpol!=null?fmtR(r.applicableCpol):(r.idealCpol!=null?`<span style="color:var(--muted);font-size:11px;">${fmtR(r.idealCpol)} <sup style="font-size:9px;">ideal</sup></span>`:'<span style="color:var(--muted)">—</span>')}</td>`+
-      `<td style="color:var(--muted);">${r.historicalCpol>0?fmtR(r.historicalCpol):'—'}</td>`+
-      `<td style="color:var(--teal);font-weight:700;">${r.idealCpol!=null?fmtR(r.idealCpol):'<span style="color:var(--muted)">—</span>'}</td>`+
-      `<td style="color:${devCol};font-weight:700;">${devStr}</td>`;
+    const cur=(currentAlloc&&currentAlloc[p]!=null)?currentAlloc[p]:null;
+    const unit=(unitCpols&&unitCpols[p]!=null&&unitCpols[p]<900)?unitCpols[p]:null;
+    const lo=(scBounds[p]&&scBounds[p].min!=null)?scBounds[p].min:'';
+    const hi=(scBounds[p]&&scBounds[p].max!=null)?scBounds[p].max:'';
+    const loNum=lo===''?2:Number(lo), hiNum=hi===''?70:Number(hi);
+    const bar=`<div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);">
+      <div style="flex:1;height:5px;background:var(--border);border-radius:99px;position:relative;">
+        <div style="position:absolute;left:${loNum/70*100}%;right:${(100-hiNum/70*100)}%;height:100%;
+          background:var(--accent);border-radius:99px;"></div>
+      </div>${loNum}–${hiNum}%</div>`;
+    tr.innerHTML=`<td style="font-weight:700;text-align:left;">${p}</td>`+
+      `<td>${cur!=null?cur.toFixed(1)+'%':'—'}</td>`+
+      `<td style="color:var(--teal);font-weight:700;">${unit!=null?fmtR(unit):'—'}</td>`+
+      `<td><input class="sc-bound-min" data-p="${p}" type="number" min="2" max="70" step="0.01"
+        value="${lo}" placeholder="2" style="width:65px;text-align:right;border:1px solid var(--border);
+        border-radius:6px;padding:4px 8px;font-size:13px;"></td>`+
+      `<td><input class="sc-bound-max" data-p="${p}" type="number" min="2" max="70" step="0.01"
+        value="${hi}" placeholder="70" style="width:65px;text-align:right;border:1px solid var(--border);
+        border-radius:6px;padding:4px 8px;font-size:13px;"></td>`+
+      `<td>${bar}</td>`;
     tb.appendChild(tr);
   });
-
-  // Wire inputs
-  tb.querySelectorAll('.alloc-input').forEach(inp=>{
+  tb.querySelectorAll('.sc-bound-min,.sc-bound-max').forEach(inp=>{
     inp.addEventListener('input',()=>{
-      const mode=getMode(),vol=getVolume(),p=inp.dataset.p;
-      if(mode==='pct'){
-        allocValues[p]=Math.max(0,Math.min(100,Number(inp.value)||0));
-      } else {
-        const v=Math.max(0,Number(inp.value)||0);
-        allocValues[p]=vol>0?r2(v/vol*100):0;
-      }
-      updateBar();runAlloc();
+      const p=inp.dataset.p, isMin=inp.classList.contains('sc-bound-min');
+      if(!scBounds[p])scBounds[p]={min:null,max:null};
+      const v=inp.value===''?null:Number(inp.value);
+      if(isMin)scBounds[p].min=v;else scBounds[p].max=v;
+      runScenarios();
     });
   });
-  updateAllocSummary(data);updateBar();
 }
 
-function updateAllocSummary(data){
-  const costEl    = document.getElementById('sum-cost');
-  const netCpolEl = document.getElementById('sum-net-cpol');
-  const idealEl   = document.getElementById('sum-ideal-cpol');
-  const varEl     = document.getElementById('sum-variance');
-  const histEl    = document.getElementById('sum-hist-cpol');
-  const improveEl = document.getElementById('sum-ideal-improve');
-  const warn      = document.getElementById('alloc-warn');
-  if(!costEl) return;
+function renderScComparison(data){
+  const head=document.getElementById('sc-compare-head'),body=document.getElementById('sc-compare-body');
+  if(!head||!body)return;
+  const partners=data.partners||[];
+  const scenarios=data.scenarios||[];
+  let hdr='<tr><th>Scenario</th>';
+  partners.forEach(p=>hdr+=`<th>${p}</th>`);
+  hdr+='<th>Total Cost</th><th>Net CPOL</th><th>Δ vs Current</th></tr>';
+  head.innerHTML=hdr;
 
-  if(!data){
-    [costEl,netCpolEl,idealEl,varEl,improveEl].forEach(e=>{if(e)e.textContent='—';});
-    if(histEl) histEl.textContent='—';
-    if(warn) warn.style.display='none';
+  body.innerHTML='';
+  if(!scenarios.length){body.innerHTML=`<tr class="empty-row"><td colspan="${partners.length+4}">Enter Total Volume to begin</td></tr>`;return;}
+
+  let bestIdx=-1,bestCpol=Infinity;
+  scenarios.forEach((s,i)=>{if(s.netCPOL!=null&&s.netCPOL<bestCpol){bestCpol=s.netCPOL;bestIdx=i;}});
+
+  scenarios.forEach((s,i)=>{
+    const tr=document.createElement('tr');tr.className='sc-row';
+    if(s.key==='current')tr.classList.add('sc-current');
+    if(s.key==='recommended')tr.classList.add('sc-recommended');
+    if(i===bestIdx)tr.classList.add('sc-best');
+    if(s.key===scSelectedKey)tr.classList.add('selected');
+    let row=`<td style="font-weight:700;">${s.label}</td>`;
+    partners.forEach(p=>{row+=`<td>${(s.allocation[p]||0).toFixed(1)}%</td>`;});
+    const delta=s.deltaVsCurrent;
+    const deltaStr=delta==null?'—':(delta<=0?'▼ ':'▲ ')+fmtR(Math.abs(delta));
+    const deltaCol=delta==null?'var(--muted)':delta<0?'var(--good)':delta>0?'var(--bad)':'var(--muted)';
+    row+=`<td>${fmtM(s.totalCost)}</td><td style="font-weight:800;">${s.netCPOL!=null?fmtR(s.netCPOL):'—'}</td>`+
+         `<td style="color:${deltaCol};font-weight:700;">${deltaStr}</td>`;
+    tr.innerHTML=row;
+    tr.addEventListener('click',()=>{scSelectedKey=s.key;renderScComparison(data);renderScDetail(s);});
+    body.appendChild(tr);
+  });
+}
+
+function renderScDetail(scenario){
+  const label=document.getElementById('sc-detail-label'),tb=document.getElementById('sc-detail-body');
+  if(!label||!tb)return;
+  if(!scenario){label.textContent='—';tb.innerHTML='<tr class="empty-row"><td colspan="6">Select a scenario above</td></tr>';return;}
+  label.textContent=scenario.label;
+  tb.innerHTML='';
+  (scenario.rows||[]).forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="font-weight:700;">${r.partner}</td><td>${(r.allocPct||0).toFixed(1)}%</td>`+
+      `<td>${fmtN(r.volume||0)}</td><td>${fmtN(r.netDelivered||0)}</td>`+
+      `<td style="color:var(--accent-2);font-weight:700;">${r.applicableCpol!=null?fmtR(r.applicableCpol):'—'}</td>`+
+      `<td>${fmtM(r.cost||0)}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+function updateScSummary(data){
+  const histEl=document.getElementById('sc-sum-hist'),curEl=document.getElementById('sc-sum-current'),
+        recEl=document.getElementById('sc-sum-recommended'),impEl=document.getElementById('sc-sum-improve'),
+        warn=document.getElementById('sc-warn');
+  if(!data||!data.scenarios||!data.scenarios.length){
+    [histEl,curEl,recEl,impEl].forEach(e=>{if(e)e.textContent='—';});
+    if(warn)warn.style.display='none';
     return;
   }
-
-  const hasAlloc = (data.inputAllocationPct||0) > 0.01;
-  const target   = getTarget();
-
-  if(histEl) histEl.textContent = data.historicalPortfolioCpol>0 ? fmtR(data.historicalPortfolioCpol) : '—';
-  idealEl.textContent = data.idealNetCPOL > 0 ? fmtR(data.idealNetCPOL) : '—';
-  costEl.textContent  = hasAlloc && isFinite(data.projectedCost) ? fmtM(data.projectedCost) : '—';
-
-  // Ideal improvement vs historical
-  if(improveEl){
-    const imp = data.idealImprovement;
-    if(imp!=null && imp>0){
-      improveEl.textContent = '▼ '+fmtR(imp);
-      improveEl.style.color = 'var(--good)';
-    } else if(imp!=null && imp<0){
-      improveEl.textContent = '▲ '+fmtR(Math.abs(imp));
-      improveEl.style.color = 'var(--bad)';
+  const current=data.scenarios[0], recommended=data.scenarios[data.scenarios.length-1];
+  if(histEl)histEl.textContent=data.historicalPortfolioCpol>0?fmtR(data.historicalPortfolioCpol):'—';
+  if(curEl)curEl.textContent=current.netCPOL!=null?fmtR(current.netCPOL):'—';
+  if(recEl)recEl.textContent=recommended.netCPOL!=null?fmtR(recommended.netCPOL):'—';
+  if(impEl){
+    if(current.netCPOL!=null&&recommended.netCPOL!=null){
+      const imp=r2(current.netCPOL-recommended.netCPOL);
+      impEl.textContent=(imp>=0?'▼ ':'▲ ')+fmtR(Math.abs(imp));
+      impEl.style.color=imp>=0?'var(--good)':'var(--bad)';
+    } else impEl.textContent='—';
+  }
+  if(warn){
+    if(current.netCPOL==null){warn.style.display='none';}
+    else if(data.recommendedBeatsCurrent===false){
+      warn.style.cssText='display:block;margin-bottom:16px;padding:12px 16px;border-radius:12px;font-size:12px;font-weight:600;background:var(--warn-tint);border:1px solid var(--warn);color:var(--warn);';
+      warn.textContent='⚠ Within the bounds you’ve set, the current mix is already close to the best achievable — widen a partner’s range for more room to improve.';
     } else {
-      improveEl.textContent = '—';
-      improveEl.style.color = 'var(--muted)';
+      warn.style.cssText='display:block;margin-bottom:16px;padding:12px 16px;border-radius:12px;font-size:12px;font-weight:600;background:var(--good-tint-strong);border:1px solid var(--good);color:var(--good);';
+      warn.textContent=`✓ Recommended mix lowers CPOL from ${fmtR(current.netCPOL)} to ${fmtR(recommended.netCPOL)} within your bounds.`;
     }
   }
+}
 
-  // Your Net CPOL
-  if(netCpolEl){
-    netCpolEl.textContent = hasAlloc && data.netCPOL!=null ? fmtR(data.netCPOL) : '—';
-    if(hasAlloc && data.netCPOL!=null && data.historicalPortfolioCpol>0){
-      netCpolEl.style.color = data.netCPOL < data.historicalPortfolioCpol ? 'var(--good)' : 'var(--warn)';
-    } else { netCpolEl.style.color = 'var(--coral)'; }
-  }
-
-  // Variance to target
-  warn.style.cssText = '';
-  if(target!=null && hasAlloc && data.netCPOL!=null){
-    const diff = r2(data.netCPOL - target);
-    if(varEl){ varEl.textContent=(diff>0?'+':'')+fmtR(diff); varEl.style.color=diff<=0?'var(--good)':diff<2?'var(--warn)':'var(--bad)'; }
-    if(!data.allocationValid){
-      _showWarn(warn,'⚠','bad',`Allocation must total 100%. Current: ${(data.inputAllocationPct||0).toFixed(1)}%`);
-    } else if(diff<=0){
-      _showWarn(warn,'✓','good',`Your CPOL ${fmtR(data.netCPOL)} is ₹${Math.abs(diff)} below target. Ideal split achieves ${fmtR(data.idealNetCPOL)}.`);
-    } else {
-      _showWarn(warn,'⚠','warn',`Your CPOL ${fmtR(data.netCPOL)} is ₹${diff} above target. Ideal 1/CPOL split achieves ${fmtR(data.idealNetCPOL)}.`);
+function runScenarios(){
+  clearTimeout(scTimer);
+  scTimer=setTimeout(async()=>{
+    const vol=getScVolume();
+    if(vol<=0){
+      lastScData=null;scSelectedKey=null;
+      renderScComparison({partners:Array.from(scSelected),scenarios:[]});
+      renderScDetail(null);updateScSummary(null);
+      renderScBoundsTable(Array.from(scSelected),{},{});
+      return;
     }
-  } else if(target!=null && hasAlloc){
-    if(varEl){ varEl.textContent='—'; varEl.style.color='var(--muted)'; }
-    if(!data.allocationValid){ _showWarn(warn,'⚠','bad',`Allocation must total 100%. Current: ${(data.inputAllocationPct||0).toFixed(1)}%`); }
-    else warn.style.display='none';
-  } else if(!hasAlloc && data.idealNetCPOL>0 && data.historicalPortfolioCpol>0){
-    if(varEl){ varEl.textContent='—'; varEl.style.color='var(--muted)'; }
-    const impStr = data.idealImprovement>0 ? `▼ ₹${data.idealImprovement} vs historical` : 'No improvement possible';
-    _showWarn(warn,'💡','teal',`Ideal 1/CPOL split achieves ${fmtR(data.idealNetCPOL)} (${impStr}). Enter your % above to compare.`);
-  } else {
-    if(varEl){ varEl.textContent='—'; varEl.style.color='var(--muted)'; }
-    if(!data.allocationValid && hasAlloc){ _showWarn(warn,'⚠','bad',`Allocation must total 100%. Current: ${(data.inputAllocationPct||0).toFixed(1)}%`); }
-    else warn.style.display='none';
-  }
-}
-
-function _showWarn(el, icon, type, msg){
-  const palette={'good':'var(--good-tint-strong),var(--good)','bad':'var(--bad-tint-strong),var(--bad-border)','warn':'var(--warn-tint),var(--warn)','teal':'var(--teal-tint),var(--teal)'};
-  const [bg,border]=(palette[type]||palette.warn).split(',');
-  el.style.cssText=`display:block;margin-top:14px;padding:12px 16px;border-radius:12px;font-size:12px;font-weight:600;background:${bg};border:1px solid ${border};color:${border};`;
-  el.textContent=`${icon} ${msg}`;
-}
-
-function collectAllocs(){
-  snapshotValues();
-  const a={};
-  allocSelected.forEach(p=>{ a[p]=allocValues[p]||0; });
-  return a;
-}
-
-function collectBounds(){
-  const mins={}, maxs={};
-  document.querySelectorAll('.bound-min').forEach(inp=>{
-    const v=parseFloat(inp.value); if(isFinite(v)&&v>=0) mins[inp.dataset.p]=v;
-  });
-  document.querySelectorAll('.bound-max').forEach(inp=>{
-    const v=parseFloat(inp.value); if(isFinite(v)&&v>=0) maxs[inp.dataset.p]=v;
-  });
-  return {mins,maxs};
-}
-
-function runAlloc(){
-  clearTimeout(allocTimer);
-  allocTimer=setTimeout(async()=>{
-    const vol=getVolume(),target=getTarget();
-    const mode=getMode();
+    const target=getScTarget();
+    const params={totalVolume:vol,numScenarios:scSteps};
+    if(target!=null)params.targetCpol=target;
+    if(scSelected.size&&scSelected.size<ALL_PARTNERS.length)params.partners=Array.from(scSelected).join(',');
+    Object.keys(scBounds).forEach(p=>{
+      if(scBounds[p].min!=null)params['min_'+p]=scBounds[p].min;
+      if(scBounds[p].max!=null)params['max_'+p]=scBounds[p].max;
+    });
     try{
-      const allocs=collectAllocs();
-      const params={totalVolume:vol,inputMode:mode};
-      if(target!=null)params.targetCpol=target;
-      Object.entries(allocs).forEach(([p,v])=>{params['alloc_'+p]=v;});
-      const {mins,maxs}=collectBounds();
-      Object.entries(mins).forEach(([p,v])=>{params['min_'+p]=v;});
-      Object.entries(maxs).forEach(([p,v])=>{params['max_'+p]=v;});
-      const data=await apiGet('simulateAllocation',params);
-      renderAllocTable(data);
+      const data=await apiGet('simulateScenarios',params);
+      lastScData=data;
+      if(!scSelectedKey||!data.scenarios.find(s=>s.key===scSelectedKey)){
+        const rec=data.scenarios.find(s=>s.key==='recommended');
+        scSelectedKey=rec?rec.key:(data.scenarios[0]&&data.scenarios[0].key);
+      }
+      const currentAllocForBounds={};
+      (data.scenarios[0]&&data.scenarios[0].allocation)||{};
+      if(data.scenarios[0])Object.assign(currentAllocForBounds,data.scenarios[0].allocation);
+      renderScBoundsTable(data.partners,data.unitCpols,currentAllocForBounds);
+      renderScComparison(data);
+      updateScSummary(data);
+      const sel=data.scenarios.find(s=>s.key===scSelectedKey);
+      renderScDetail(sel);
     }catch(err){
-      const tb=document.getElementById('alloc-body');
-      if(tb)tb.innerHTML=`<tr class="empty-row"><td colspan="9">Error: ${err.message}</td></tr>`;
-      updateAllocSummary(null);
+      document.getElementById('sc-compare-body').innerHTML=`<tr class="empty-row"><td>Error: ${err.message}</td></tr>`;
+      updateScSummary(null);
     }
-  },150);
+  },200);
 }
 
-async function initAlloc(){
-  document.getElementById('alloc-volume').addEventListener('input',()=>{if(lastAllocData)renderAllocTable(lastAllocData);runAlloc();});
-  document.getElementById('alloc-target').addEventListener('input',runAlloc);
-  document.getElementById('alloc-mode').addEventListener('change',()=>{if(lastAllocData)renderAllocTable(lastAllocData);});
-  document.getElementById('btn-alloc-reset').addEventListener('click',()=>{
-    document.getElementById('alloc-volume').value='';
-    document.getElementById('alloc-target').value='';
-    allocSelected=new Set();allocValues={};lastAllocData=null;
-    renderAllocTable(null);
-  });
-  try{
-    const data=await apiGet('simulateAllocation',{totalVolume:0});
-    if(data&&data.rows){
-      allocSelected=new Set(data.rows.map(r=>r.partner));
-      data.rows.forEach(r=>{allocValues[r.partner]=0;});
-      renderAllocTable(data);
-    }
-  }catch(e){renderAllocTable(null);}
+document.getElementById('sc-volume').addEventListener('input',runScenarios);
+document.getElementById('sc-target').addEventListener('input',runScenarios);
+document.getElementById('btn-sc-reset').addEventListener('click',()=>{
+  document.getElementById('sc-volume').value='';
+  document.getElementById('sc-target').value='';
+  scSelected=new Set(ALL_PARTNERS);scBounds={};scSteps=2;scSelectedKey=null;lastScData=null;
+  document.querySelectorAll('#sc-steps-seg button').forEach(b=>b.classList.toggle('active',b.dataset.steps==='2'));
+  buildScPartnerDropdown();
+  renderScBoundsTable(Array.from(scSelected),{},{});
+  renderScComparison({partners:Array.from(scSelected),scenarios:[]});
+  renderScDetail(null);updateScSummary(null);
+});
+
+function initScenarios(){
+  scSelected=new Set(ALL_PARTNERS);
+  buildScPartnerDropdown();
+  renderScBoundsTable(ALL_PARTNERS,{},{});
+  renderScComparison({partners:ALL_PARTNERS,scenarios:[]});
+  renderScDetail(null);updateScSummary(null);
 }
 
 // ── Dashboard render ──
@@ -899,7 +830,6 @@ function renderDashboard(data){
   drawPie((data.byPartner||[]).filter(r=>r[0]!=='RVP').map(r=>[r[0],r[4]]).filter(r=>r[1]>0).sort((a,b)=>b[1]-a[1]));
   const gl={day:'Daily',week:'Weekly',month:'Monthly'}[data.trendGranularity||'day'];
   document.getElementById('trend-title').textContent=`CPOL & Volume Trend (${gl})`;
-  if(allocSelected.size&&getVolume()>0)runAlloc();
 }
 
 async function loadDashboard(){
@@ -923,15 +853,14 @@ document.querySelectorAll('#gran-seg button').forEach(btn=>btn.addEventListener(
   gran=btn.dataset.gran;document.querySelectorAll('#gran-seg button').forEach(b=>b.classList.toggle('active',b===btn));loadDashboard();
 }));
 window.addEventListener('resize',()=>{
-  if(lastAllocData)return;
   const trs=Array.from(document.querySelectorAll('#tbl-partner tbody tr')).filter(t=>!t.classList.contains('empty-row')&&!t.classList.contains('total-row')&&!t.classList.contains('rvp-row'));
   const items=trs.map(t=>[t.cells[0].textContent.replace('🏆 ',''),Number(t.cells[7].textContent.replace(/[^\d.-]/g,''))]).filter(r=>r[1]>0&&isFinite(r[1]));
   if(items.length)drawBarChart('chart-bar',items,fmtR,(item,i)=>i===0?'#33c07a':BAR_COLORS[i%BAR_COLORS.length]);
 });
 
 (async function init(){
-  setStatus('Loading…','loading');renderAllocTable(null);
-  try{await loadFilters();await loadDashboard();await initAlloc();}
+  setStatus('Loading…','loading');
+  try{await loadFilters();await loadDashboard();initScenarios();}
   catch(err){setStatus('API error: '+err.message,'error');}
 })();
 </script>
